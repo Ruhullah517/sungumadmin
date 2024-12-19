@@ -1,0 +1,114 @@
+.card{
+  background-color: #fff;
+  border: 0 solid transparent;
+  border-radius: .75rem;
+  box-shadow: 0 .3125rem .3125rem 0 rgba(82, 63, 105, .05);
+  height: calc(100% - 30px);
+  margin-bottom: 1.875rem;
+  transition: all .5s ease-in-out;
+  position:static;
+}
+table.dataTable thead th {
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 1.25rem .9375rem;
+  text-transform: capitalize;
+  white-space: nowrap;
+  /* text-align: center; */
+}
+
+.text-nowrap {
+  white-space: nowrap !important;
+  vertical-align: middle;
+}
+
+table.dataTable tbody td {
+  font-size: .875rem;
+  padding: .5rem .9375rem;
+}
+.dataTables_info {
+  margin-left: 2rem;
+  font-size: .875rem;
+}
+.dataTables_paginate .paginate_button.next, .dataTables_paginate .paginate_button.previous {
+  border: .0625rem solid #293941;
+  border: .0625rem solid var(--secondary);
+  border-radius: .75rem;
+  color: #293941;
+  display: inline-block;
+  font-size: 0.7rem;
+  height: 2.125rem;
+  line-height: 2.125rem;
+  margin: 0 .525rem;
+  padding: 0 0.6rem;
+}
+.dataTables_paginate span{
+  background: #293941;
+  display: inline-block;
+  border-radius: .75rem;
+  color: #c59a63 !important;
+  font-size: 1rem;
+  height: 2.125rem;
+  line-height: 2.125rem;
+  margin: 0 .125rem;
+  padding: 0;
+  text-align: center;
+  width: 2rem !important;
+}
+ :hover.next, :hover.previous{
+  background-color: #293941;
+  color: #c59a63 !important;
+ }
+
+ .input-group {
+  align-items: stretch;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  position: static;
+}
+.search-area {
+  width: 21.938rem;
+}
+
+.form-control{
+  background: #fff;
+  border-radius: 0.55rem;
+  border: 0px;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+  color: #6e6e6e;
+  height: 3rem !important;
+  padding: .3125rem 1.25rem;
+}
+.search-area .form-control {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 1%;
+}
+.input-group>.form-control{
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: .875rem;
+  position:static;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+.input-group-text{
+  display: flex;
+  justify-content: center;
+  min-width: 3.125rem;
+  padding: .732rem .75rem;
+  height: 3rem;
+}
+.search-area .input-group-text {
+  background: #ffff;
+  border-left: 0;
+  border: 0px;
+  border-radius: .55rem;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  margin-left: -1px;
+}
+.success-container{
+  width: 50%;
+}

@@ -1,0 +1,47 @@
+/* .show-prod-image {
+    border-radius: 70px;
+    width: 70px !important;
+    height: 70px !important;
+}
+
+.table {
+    width: 75% !important;
+    margin: auto !important;
+}
+
+th,
+td {
+    text-align: center;
+}
+
+.show-ads-row {
+    vertical-align: middle;
+}
+
+.show-ads-table .table{
+    color: black !important;
+}
+
+.show-ads-table .table tr td{
+    color:black !important;
+}
+.edit-popup{
+   background-color: blue;
+}
+.checkbox-div {
+    height: 50px;
+    border-radius: 0;
+    border: 1px solid #594a42;
+    width: 100%;
+    margin-top: 10px;
+    padding: 0px 20px;
+    font-size: 12px;
+    font-family: system-ui;
+    display: flex;
+    justify-content: space-around;
+}
+ */
+ .concierge-bx img {
+    height: 2.813rem;
+    width: 2.813rem;
+}

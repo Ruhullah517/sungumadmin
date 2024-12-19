@@ -1,0 +1,57 @@
+.name-text-capitalized {
+    text-transform: capitalize !important;
+}
+
+.user-list-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #2b3a4a;
+    color: #fff;
+    padding: 5px 10px;
+    width: fit-content;
+    margin: auto;
+    margin-bottom: 20px;
+}
+
+table {
+    
+    color: black;
+    text-align: center;
+}
+
+tbody {
+    color:black;
+
+}
+th{
+    color: black;
+    /* border-bottom: 1px solid !important; */
+    /* border-top: none !important; */
+    /* border-left: none !important; */
+    /* border-right: none !important; */
+}
+
+
+.table-striped>tbody>tr:nth-of-type(odd)>* {
+    color:black;
+    text-align: center;
+    /* border-bottom: 1px solid; */
+    /* border-top: none; */
+}
+.users-table{
+    width: 70%;
+    margin: auto;
+}
+
+.users-table table thead tr th{
+    text-align: center;
+}
+
+
+@media screen and (max-width:922px){
+    .users-table{
+        width: 95%;
+        margin: auto;
+    }
+}

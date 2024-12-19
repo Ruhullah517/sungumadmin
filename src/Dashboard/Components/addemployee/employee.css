@@ -1,0 +1,73 @@
+div.containers {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .employee-table {
+    width: 97%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .employee-table th, .employee-table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .employee-table th {
+    background-color: #B3A16D;
+    color: white;
+  }
+  
+  .employee-table td {
+    background-color: #ffffff;
+    width: 20%;
+  }
+  
+  .employee-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .employee-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+  
+  .edit-btn, .delete-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+  }
+  
+  .edit-btn {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .delete-btn {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .edit-btn:hover, .delete-btn:hover {
+    opacity: 0.8;
+  }
+  .add-employee-btn{
+    text-align: center;
+    float: right;
+    background-color: #b3a16d;
+    width: 150px;
+    height: 39px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    color: white;
+  }
+  

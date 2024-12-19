@@ -1,0 +1,120 @@
+/* .mini-stat .mini-stat-img {
+    background: url(/src/AdminPanel/assets/images/bg-1.png);
+    background-size: cover;
+}
+
+.summary-row {
+    margin-right: 0px !important;
+    margin-left: 0px !important;
+    justify-content: center !important;
+}
+
+.card {
+    font-family: 'Warnock' !important;
+
+    margin-bottom: 24px;
+    -webkit-box-shadow: 0 -3px 31px 0 rgba(0, 0, 0, .05), 0 6px 20px 0 rgba(0, 0, 0, .02);
+    box-shadow: 0 -3px 31px 0 rgba(0, 0, 0, .05), 0 6px 20px 0 rgba(0, 0, 0, .02);
+    --bs-card-spacer-y: 1.25rem;
+    --bs-card-spacer-x: 1.25rem;
+    --bs-card-title-spacer-y: 0.5rem;
+    --bs-card-border-width: 0;
+    --bs-card-border-color: #dee2e6;
+    --bs-card-border-radius: 0.25rem;
+    --bs-card-inner-border-radius: 0.25rem;
+    --bs-card-cap-padding-y: 0.75rem;
+    --bs-card-cap-padding-x: 1.25rem;
+    --bs-card-cap-bg: rgba(0, 0, 0, 0.03);
+    --bs-card-bg: #fff;
+    --bs-card-img-overlay-padding: 1rem;
+    --bs-card-group-margin: 12px;
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    height: var(--bs-card-height);
+    word-wrap: break-word;
+    background-color: var(--bs-card-bg);
+    background-clip: border-box;
+    border: var(--bs-card-border-width) solid var(--bs-card-border-color);
+    border-radius: var(--bs-card-border-radius);
+
+}
+
+
+.card-body {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
+    color: var(--bs-card-color);
+}
+
+.dashboard-text h4 {
+    color: #b3a16d;
+    font-size: 2.5rem;
+    font-weight: 700;
+    font-family: 'Warnock' !important;
+
+}
+
+
+
+
+
+.dashboard-text p {
+    text-decoration: underline;
+    font-family: 'Warnock' !important;
+}
+
+.dashboard-text {
+    display: flex;
+    align-items: center;
+    padding-top: 3%;
+    padding-bottom: 3%;
+    margin: auto;
+    
+    flex-direction: column;
+    overflow: hidden;
+
+}
+
+
+
+
+
+
+
+
+@media only screen and (max-width: 550px) {
+    .dashboard-text h4 {
+        font-size: 1.2rem;
+    }
+
+    .my-store-logo-container {
+        width: 20%;
+        height: 100px;
+    }
+
+    .dashboard-text {
+        padding-top: 0%;
+    }
+
+    .dashboard-text h4 {
+        color: black;
+    }
+}
+
+
+@media only screen and (max-width: 1024px) {
+
+    .dashboard-text {
+        bottom: -15%;
+    }
+
+} */

@@ -1,0 +1,219 @@
+.main-form {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    background-color: #f1f1f1;
+  }
+  
+  .signup-form {
+    display: flex;
+    flex-direction: column;
+    width: 50vh;
+    align-items: center;
+    margin: auto;
+    background-color: white;
+    border-radius: 5px;
+  }
+  
+  .error {
+    color: red;
+  }
+  
+  .display-input >input {
+    height: 50px;
+    border-radius: 0;
+    border: 1px solid #594a42;
+    width: 100%;
+    margin-top: 10px;
+    padding: 0px 20px;
+    font-size: 12px;
+    font-family: system-ui;
+  
+  }
+  
+  .display-input>input:focus {
+    border-color: #594a42;
+    outline: none;
+  }
+  
+  .signup-form>h4 {
+    color: black;
+    padding: 12px;
+    font-family: monospace;
+    font-weight: 550;
+  }
+  
+  .signup-form>button {
+    border: none;
+    background-color: #594a42;
+    font-family: monospace;
+    font-size: larger;
+    font-weight: 550;
+    padding: 4px 20px;
+    border-radius: 5px;
+    margin-top: 10px;
+    width: 80%;
+  }
+  
+  .loginBtn {
+    padding: 10px;
+  }
+  
+  .error-box {
+    clear: both;
+    min-height: 24px;
+    padding-top: 0;
+    /* color: rgba(0,0,0,.45); */
+    font-size: 14px;
+    line-height: 1.5715;
+    -webkit-transition: color .3s cubic-bezier(.215, .61, .355, 1);
+    transition: color .3s cubic-bezier(.215, .61, .355, 1);
+  }
+  /* .display-input{
+    text-align: start;
+    width: 80%;
+  } */
+  .option-select{
+    width: 100%;
+    height: 8vh;
+    margin-top: 10px;
+  }
+
+  /* .display-input> .option-select:focus {
+    border-color: #594a42;
+    outline: none;
+  }
+  .display-input > .option-select {
+    height: 50px;
+    border-radius: 0;
+    border: 1px solid #594a42;
+    width: 100%;
+    margin-top: 10px;
+    padding: 0px 20px;
+    font-size: 12px;
+    font-family: system-ui;
+    background-color: #fcf9f9e8;
+  
+  } */
+  .option-select >option {
+    color: #594a42;
+  }
+  /* .display-input >select::placeholder {
+    color: #594a42;
+  }
+  .display-input >input::placeholder {
+    color: #594a42;
+  }
+  .display-input >textarea::placeholder{
+    color: #594a42;
+  } */
+
+  #des-box{
+    border-radius: 0;
+    border: 1px solid #594a42;
+    width: 100%;
+    margin-top: 10px;
+    padding: 0px 20px;
+    font-size: 12px;
+    font-family: system-ui;
+    height: 17vh;
+  }
+  #des-box:focus {
+    border-color: #594a42;
+    outline: none;
+  
+  }
+  .display-input >label {
+    border-radius: 0;
+    border: 1px solid #594a42;
+    margin-top: 10px;
+    padding: 8px 0px;
+    font-size: 12px;
+    font-family: 'Warnock';
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #594a42;
+    background-color: #fcf9f9e8;
+}
+
+
+.custom-checkbox >label >input[type="checkbox"] {
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    vertical-align: middle;
+    border: 1px solid #594a42;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    cursor: pointer;
+    margin: 5px;
+}
+.custom-checkbox >label >input[type="checkbox"]:checked{
+  background-color: #594a42;
+}
+/* .room-form{
+  display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    box-shadow: 0 0 3px;
+    width: 50%;
+    padding-top: 16px;
+    background-color: #fcf9f9e8;
+} */
+
+.room-form {
+  background-color: rgb(247 247 247);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+  width: 800px; /* Increased width for two columns */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+}
+
+.add-btn{
+  width: 30%;
+    height: 7vh;
+    background-color: #594a42;
+    margin: 10px;
+    border-radius: 3px;
+    color: #b3a16d ;
+}
+
+.display-input {
+  width: 70%; 
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.display-input > input,
+.display-input > select,
+.display-input > textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #594a42;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #333;
+}
+
+.display-input > input:focus,
+.display-input > select:focus,
+.display-input > textarea:focus {
+  border-color: #b3a16d;
+  outline: none;
+}
+
+.display-input > label {
+  margin-bottom: 5px;
+  color: #333;
+  font-size: 14px; /* Reduced font size */
+}
