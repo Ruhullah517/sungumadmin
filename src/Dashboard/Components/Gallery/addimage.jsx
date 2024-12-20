@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 
 function ImageUploadForm() {
   const [file, setFile] = useState(null);
   const [altText, setAltText] = useState("");
   const [tags, setTags] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,6 +29,7 @@ function ImageUploadForm() {
         method: "POST",
         body: formData,
       });
+      console.log(file);
 
       if (!response.ok) {
         throw new Error("Failed to upload image.");
@@ -34,7 +37,7 @@ function ImageUploadForm() {
 
       const result = await response.json();
       alert(`Image uploaded successfully! Image ID: ${result.id}`);
-
+      navigate('/image-list')
       // Reset form
       setFile(null);
       setAltText("");

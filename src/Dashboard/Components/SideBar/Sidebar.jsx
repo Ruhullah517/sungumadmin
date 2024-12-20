@@ -126,8 +126,6 @@ export default function SideBar({ isOpen, setIsOpen }) {
             icon="fas fa-concierge-bell"
             title="Food Menu"
             links={[
-              { href: "/hotel-menu", label: "Hotel Menu" },
-              { href: "/add-hotel-menu", label: "Add Hotel Menu" },
               { href: "/event-menu", label: "Event Menu" },
               { href: "/add-event-menu", label: "Add Event Menu" },
             ]}

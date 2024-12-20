@@ -1,18 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-export default function EditStaff ({ staff, onSave, onHide }){
-
+export default function EditStaff({ staff, onSave, onHide }) {
   const [formData, setFormData] = useState({ ...staff });
+
+  useEffect(() => {
+    setFormData({
+      ...staff,
+      joining_date: staff?.joining_date
+        ? new Date(staff.joining_date).toISOString().split("T")[0] // Format to YYYY-MM-DD
+        : "",
+    });
+  }, [staff]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? (checked ? value : "") : value,
+      [name]: type === "checkbox" ? (checked ? 1 : 0) : value,
     });
   };
 
   const handleSubmit = () => {
+    if (!formData.name || !formData.email || !formData.phone || !formData.role || !formData.on_duty) {
+      alert("Please fill all required fields!");
+      return;
+    }
+
+    // Pass the complete `formData` to the parent `onSave` function
     onSave(formData);
   };
 
@@ -36,50 +50,66 @@ export default function EditStaff ({ staff, onSave, onHide }){
         </div>
 
         <div className="mt-4 space-y-4">
-          {/* Title */}
+          {/* Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Name:
             </label>
             <input
               type="text"
-              name="StaffName"
-              value={formData.StaffName}
+              name="name"
+              value={formData.name || ""}
               onChange={handleChange}
               className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:outline-none"
             />
           </div>
 
-          {/* Room Type */}
+          {/* Email */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Email:
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email || ""}
+              onChange={handleChange}
+              className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:outline-none"
+            />
+          </div>
+
+          {/* Phone */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Phone No:
             </label>
             <input
               type="text"
-              name="phoneNo"
-              value={formData.phoneNo}
+              name="phone"
+              value={formData.phone}
               onChange={handleChange}
               className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:outline-none"
             />
           </div>
 
-          {/* Price */}
+          {/* On Duty */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              On Duty:
+              On Duty (0 = No, 1 = Yes):
             </label>
             <input
-              type="text"
-              name="onDuty"
-              value={formData.onDuty}
+              type="number"
+              name="on_duty"
+              value={formData.on_duty}
               onChange={handleChange}
               className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:outline-none"
             />
           </div>
+
+          {/* Role */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Role
+              Role:
             </label>
             <input
               type="text"
@@ -90,39 +120,21 @@ export default function EditStaff ({ staff, onSave, onHide }){
             />
           </div>
 
-          {/* Status */}
-          {/* <div>
+          {/* Joining Date */}
+          <div>
             <label className="block text-sm font-medium text-gray-700">
-              Status:
+              Joining Date:
             </label>
-            <div className="flex gap-4 mt-2">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  name="roomStatus"
-                  value="Available"
-                  checked={formData.roomStatus === "Available"}
-                  onChange={handleChange}
-                  className="rounded text-blue-600 focus:ring-blue-300"
-                />
-                <span className="text-sm">Available</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  name="roomStatus"
-                  value="Mantanance"
-                  checked={formData.roomStatus === "Mantanance"}
-                  onChange={handleChange}
-                  className="rounded text-blue-600 focus:ring-blue-300"
-                />
-                <span className="text-sm">On Mantanance</span>
-              </label>
-            </div>
-          </div> */}
+            <input
+              type="date"
+              name="joining_date"
+              value={formData.joining_date || new Date().toISOString().split("T")[0]}
+              onChange={handleChange}
+              className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:outline-none"
+            />
+          </div>
         </div>
 
-        {/* Footer */}
         <div className="mt-6 flex justify-end gap-4">
           <button
             onClick={onHide}
