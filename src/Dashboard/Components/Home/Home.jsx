@@ -38,6 +38,7 @@ import AddHotelMenu from '../Menu/addhotelmenu';
 import EventMenu from '../Menu/eventmenu';
 import AddEventMenu from '../Menu/addeventmenu';
 import EventBookingPage from '../EventsBooking/eventbooking';
+import RoomBookingRequests from '../RoomsBooking/roomBookingRequest';
 
 
 const Home = () => {
@@ -60,49 +61,49 @@ const Home = () => {
 
   return (<>
 
-        <Header isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className=" bg-gray-100">
-          <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-        {/* <div className="h-full"> */}
-          <main className={`w-full pt-20 ${isSidebarOpen ? "pl-60":  " pl-20 "}`}>
-            <Routes>
-              <Route path='/' element={<Dashboard />} />
-              <Route path='/all-bookings' element={<RoomBooking />} />
-              <Route path='/addroom' element={<AddRoom />} />
-              <Route path='/all-rooms' element={<ShowRoom />} />
-              <Route path='/users' element={<Users />} />
-              <Route path='/room-booking' element={<Booking />} />
-              {/* <Route path='/book-room/:roomid' element={<Booking />} /> */}
-              <Route path='*' element={<ErrorPage />} />
-              {/* <Route path='/add-booking/:bookingId' element={<BookingDetail />} /> */}
-              <Route path='/checkoutbooking' element={<BookingDetail />} />
-              <Route path='/bookingsuccess' element={<BookingSuccess />} />
-              <Route path='/staff-list' element={<Stafflist />} />
-              <Route path='/employeetable' element={<EmployeeTable />} />
-              <Route path='/all-events' element={<EventList />} />
-              <Route path='/add-event' element={<AddEvent />} />
-              <Route path='/event-payment-detail' element={<EventBookingDetail />} />
-              <Route path='/event-booking-success' element={<EventBookingSuccess />} />
-              <Route path='/event-booking-list' element={<EventBookingList />} />
-              <Route path='/event-payment-list' element={<EventPaymentList />} />
-              <Route path='/room-payment-list' element={<RoomsPaymentList/>} />
-              <Route path='/add-staff' element={<AddStaff/>} />
-              <Route path='/calendar' element={<Calendar/>} />
-              <Route path='/income-report' element={<IncomeReport/>}/>
-              <Route path='/image-list' element={<Gallery/>}/>
-              <Route path='/add-image' element={<ImageUploadForm/>}/>
-              <Route path='/hotel-menu' element={<HotelMenu/>}/>
-              <Route path='/add-hotel-menu' element={<AddHotelMenu/>}/>
-              <Route path='/event-menu' element={<EventMenu/>}/>
-              <Route path='/add-event-menu' element={<AddEventMenu/>}/>
-              <Route path='/event-booking' element={<EventBookingPage/>}/>
-              {/* Add other routes as necessary */}
-            </Routes>
-            <Footer/>
-          </main>
-        </div>
-      {/* </div> */}
-    </>
+    <Header isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+    <div className=" bg-gray-100">
+      <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+      {/* <div className="h-full"> */}
+      <main className={`w-full pt-20 ${isSidebarOpen ? "pl-60" : " pl-20 "}`}>
+        <Routes>
+          <Route path='/' element={<Dashboard />} />
+          <Route path='/all-bookings' element={<RoomBooking />} />
+          <Route path='/addroom' element={<AddRoom />} />
+          <Route path='/all-rooms' element={<ShowRoom />} />
+          <Route path='/users' element={<Users />} />
+          <Route path='/room-booking' element={<Booking />} />
+          {/* <Route path='/book-room/:roomid' element={<Booking />} /> */}
+          <Route path='*' element={<ErrorPage />} />
+          {/* <Route path='/add-booking/:bookingId' element={<BookingDetail />} /> */}
+          <Route path='/checkoutbooking' element={<BookingDetail />} />
+          <Route path='/bookingsuccess' element={<BookingSuccess />} />
+          <Route path='/staff-list' element={<Stafflist />} />
+          <Route path='/employeetable' element={<EmployeeTable />} />
+          <Route path='/all-events' element={<EventList />} />
+          <Route path='/add-event' element={<AddEvent />} />
+          <Route path='/event-payment-detail' element={<EventBookingDetail />} />
+          <Route path='/event-booking-success' element={<EventBookingSuccess />} />
+          <Route path='/event-booking-list' element={<EventBookingList />} />
+          <Route path='/event-payment-list' element={<EventPaymentList />} />
+          <Route path='/room-payment-list' element={<RoomsPaymentList />} />
+          <Route path='/add-staff' element={<AddStaff />} />
+          <Route path='/calendar' element={<Calendar />} />
+          <Route path='/income-report' element={<IncomeReport />} />
+          <Route path='/image-list' element={<Gallery />} />
+          <Route path='/add-image' element={<ImageUploadForm />} />
+          <Route path='/hotel-menu' element={<HotelMenu />} />
+          <Route path='/add-hotel-menu' element={<AddHotelMenu />} />
+          <Route path='/event-menu' element={<EventMenu />} />
+          <Route path='/add-event-menu' element={<AddEventMenu />} />
+          <Route path='/event-booking' element={<EventBookingPage />} />
+          <Route path='/room-booking-requests' element={<RoomBookingRequests />} />
+          {/* Add other routes as necessary */}
+        </Routes>
+        <Footer />
+      </main>
+    </div>
+  </>
   );
 };
 

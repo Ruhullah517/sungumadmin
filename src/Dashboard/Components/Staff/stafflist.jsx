@@ -152,6 +152,7 @@ export default function StaffList() {
               </thead>
               <tbody>
                 {filteredStaffs.map((staff, index) => (
+
                   <tr key={index} role="row">
                     <td><span className="text-nowrap p-3 ">SID-00{staff.id}</span></td>
                     <td><span className="text-nowrap p-3 ">{staff.name}</span></td>
@@ -173,7 +174,7 @@ export default function StaffList() {
                       <div className="flex gap-1">
                         <button
                           className="border bg-[#293941] text-[#c59a63] rounded shadow-md px-2 py-1 hover:bg-[#c59a63] hover:text-[#293941]"
-                          onClick={()=>handleDelete(staff.id)}
+                          onClick={() => handleDelete(staff.id)}
                         >
                           Delete
                         </button>

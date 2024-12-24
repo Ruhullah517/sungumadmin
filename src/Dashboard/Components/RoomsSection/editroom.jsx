@@ -1,18 +1,41 @@
 import React, { useState } from "react";
 
 function EditRoom({ room, onSave, onHide }) {
-  const [formData, setFormData] = useState({ ...room });
-
+  const [formData, setFormData] = useState({
+    name: room.name || '',
+    number: room.number || '',
+    price: room.price || '',
+    description: room.description || '',
+    capacity: room.capacity || '',
+  });
+  const [images, setImages] = useState(null);
+  const [existingImages] = useState(JSON.parse(room.images || '[]'));
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? (checked ? value : "") : value,
+      [name]: value,
     });
   };
-
-  const handleSubmit = () => {
-    onSave(formData);
+  const handleFileChange = (e) => {
+    setImages(e.target.files);
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formDataToSend = new FormData();
+    // Append all form fields
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
+    });
+    // Append existing images that weren't deleted
+    formDataToSend.append('existingImages', JSON.stringify(existingImages));
+    // Append new images if any
+    if (images) {
+      Array.from(images).forEach((file) => {
+        formDataToSend.append('images', file);
+      });
+    }
+    onSave(formDataToSend);
   };
 
   return (
@@ -35,29 +58,29 @@ function EditRoom({ room, onSave, onHide }) {
         </div>
 
         <div className="mt-4 space-y-4">
-          {/* Title */}
+          {/* Room Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Room Type:
+              Room Name:
             </label>
             <input
               type="text"
-              name="roomName"
-              value={formData.roomName}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:outline-none"
             />
           </div>
 
-          {/* Room Type */}
+          {/* Room Number */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Room No:
+              Room Number:
             </label>
             <input
-              type="text"
-              name="roomType"
-              value={formData.roomNo}
+              type="number"
+              name="number"
+              value={formData.number}
               onChange={handleChange}
               className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:outline-none"
             />
@@ -69,55 +92,39 @@ function EditRoom({ room, onSave, onHide }) {
               Price:
             </label>
             <input
-              type="text"
-              name="roomPrice"
-              value={formData.roomPrice}
-              onChange={handleChange}
-              className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:outline-none"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Max Capacity
-            </label>
-            <input
-              type="text"
-              name="maxcap"
-              value={formData.maxcap}
+              type="number"
+              name="price"
+              value={formData.price}
               onChange={handleChange}
               className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:outline-none"
             />
           </div>
 
-          {/* Status */}
+          {/* Capacity */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Status:
+              Capacity:
             </label>
-            <div className="flex gap-4 mt-2">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  name="roomStatus"
-                  value="Available"
-                  checked={formData.roomStatus === "Available"}
-                  onChange={handleChange}
-                  className="rounded text-[#c59a63] focus:ring-[#c59a63]"
-                />
-                <span className="text-sm">Available</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  name="roomStatus"
-                  value="Mantanance"
-                  checked={formData.roomStatus === "Mantanance"}
-                  onChange={handleChange}
-                  className="rounded text-blue-600 focus:ring-blue-300"
-                />
-                <span className="text-sm">On Mantanance</span>
-              </label>
-            </div>
+            <input
+              type="number"
+              name="capacity"
+              value={formData.capacity}
+              onChange={handleChange}
+              className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:outline-none"
+            />
+          </div>
+
+          {/* Images */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Update Images:
+            </label>
+            <input
+              type="file"
+              multiple
+              onChange={handleFileChange}
+              className="mt-1 block w-full text-gray-700 focus:outline-none"
+            />
           </div>
         </div>
 

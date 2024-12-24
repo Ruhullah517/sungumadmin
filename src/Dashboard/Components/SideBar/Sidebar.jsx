@@ -56,8 +56,8 @@ export default function SideBar({ isOpen, setIsOpen }) {
             icon="fas fa-suitcase"
             title="Room Booking"
             links={[
-              { href: "/all-bookings", label: "Bookings List" },
-              // { href: "/edit-booking", label: "Edit Booking" },
+              { href: "/all-bookings", label: "Available Rooms" },
+              {href:'/room-booking-requests', label: "Booking Requests"},
               { href: "/all-rooms", label: "Book Room" },
             ]}
           />
