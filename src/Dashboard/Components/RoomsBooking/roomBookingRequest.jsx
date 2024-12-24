@@ -6,6 +6,7 @@ const RoomBookingRequests = () => {
     const [bookingRequests, setBookingRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [processingRequests, setProcessingRequests] = useState(new Set());
 
     useEffect(() => {
         fetchBookingRequests();
@@ -26,26 +27,42 @@ const RoomBookingRequests = () => {
 
     const handleConfirm = async (requestId) => {
         try {
+            setProcessingRequests(prev => new Set([...prev, requestId]));
+            console.log("porcessing erq",processingRequests);
+            
             await axios.post(`http://localhost:5000/api/room-booking-requests/${requestId}/confirm`);
-            alert('Booking confirmed successfully');
-            // Remove the confirmed request from the list
             setBookingRequests(prev => prev.filter(request => request.id !== requestId));
+            console.log(bookingRequests);
+            
+            alert('Booking confirmed successfully');
         } catch (error) {
             console.error('Error confirming booking:', error);
             alert('Failed to confirm booking');
+        } finally {
+            setProcessingRequests(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(requestId);
+                return newSet;
+            });
         }
     };
 
     const handleReject = async (requestId) => {
         if (window.confirm('Are you sure you want to reject this booking request?')) {
             try {
+                setProcessingRequests(prev => new Set([...prev, requestId]));
                 await axios.post(`http://localhost:5000/api/room-booking-requests/${requestId}/reject`);
-                alert('Booking rejected successfully');
-                // Remove the rejected request from the list
                 setBookingRequests(prev => prev.filter(request => request.id !== requestId));
+                alert('Booking rejected successfully');
             } catch (error) {
                 console.error('Error rejecting booking:', error);
                 alert('Failed to reject booking');
+            } finally {
+                setProcessingRequests(prev => {
+                    const newSet = new Set(prev);
+                    newSet.delete(requestId);
+                    return newSet;
+                });
             }
         }
     };
@@ -107,15 +124,33 @@ const RoomBookingRequests = () => {
                                         <div className="flex gap-2">
                                             <button
                                                 onClick={() => handleConfirm(request.id)}
-                                                className="bg-[#c59a63] text-[#293941] px-3 py-1 rounded hover:bg-[#293941] hover:text-[#c59a63]"
+                                                disabled={processingRequests.has(request.id)}
+                                                className="bg-[#c59a63] text-[#293941] px-3 py-1 rounded hover:bg-[#293941] hover:text-[#c59a63] disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
-                                                Confirm
+                                                {processingRequests.has(request.id) ? (
+                                                    <span className="flex items-center">
+                                                        Processing...
+                                                        <svg className="animate-spin ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                        </svg>
+                                                    </span>
+                                                ) : 'Confirm'}
                                             </button>
                                             <button
                                                 onClick={() => handleReject(request.id)}
-                                                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                                                disabled={processingRequests.has(request.id)}
+                                                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
-                                                Reject
+                                                {processingRequests.has(request.id) ? (
+                                                    <span className="flex items-center">
+                                                        Processing...
+                                                        <svg className="animate-spin ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                        </svg>
+                                                    </span>
+                                                ) : 'Reject'}
                                             </button>
                                         </div>
                                     </td>

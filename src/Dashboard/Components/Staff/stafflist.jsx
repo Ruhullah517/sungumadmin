@@ -151,43 +151,45 @@ export default function StaffList() {
                 </tr>
               </thead>
               <tbody>
-                {filteredStaffs.map((staff, index) => (
-
-                  <tr key={index} role="row">
-                    <td><span className="text-nowrap p-3 ">SID-00{staff.id}</span></td>
-                    <td><span className="text-nowrap p-3 ">{staff.name}</span></td>
-                    <td><span className="text-nowrap p-3 ">{staff.email}</span></td>
-                    <td><span className="text-nowrap p-3 ">{staff.phone}</span></td>
-                    <td><span className="text-nowrap p-3 ">{staff.joining_date}</span></td>
-                    <td><span className="text-nowrap p-3 ">{staff.on_duty ? "Yes" : "No"}</span></td>
-                    <td>
-                      <span
-                        className={`px-2 py-1 rounded ${staff.on_duty
-                          ? "bg-[#c59a63] text-[#293941]"
-                          : "bg-[#293941] text-[#c59a63]"
-                          }`}
-                      >
-                        {staff.role}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="flex gap-1">
-                        <button
-                          className="border bg-[#293941] text-[#c59a63] rounded shadow-md px-2 py-1 hover:bg-[#c59a63] hover:text-[#293941]"
-                          onClick={() => handleDelete(staff.id)}
+                {filteredStaffs.map((staff, index) => {
+                  const date = new Date(staff.joining_date).toISOString().split('T')[0]
+                  return (
+                    <tr key={index} role="row">
+                      <td><span className="text-nowrap p-3 ">SID-00{staff.id}</span></td>
+                      <td><span className="text-nowrap p-3 ">{staff.name}</span></td>
+                      <td><span className="text-nowrap p-3 ">{staff.email}</span></td>
+                      <td><span className="text-nowrap p-3 ">{staff.phone}</span></td>
+                      <td><span className="text-nowrap p-3 ">{date}</span></td>
+                      <td><span className="text-nowrap p-3 ">{staff.on_duty ? "Yes" : "No"}</span></td>
+                      <td>
+                        <span
+                          className={`px-2 py-1 rounded ${staff.on_duty
+                            ? "bg-[#c59a63] text-[#293941]"
+                            : "bg-[#293941] text-[#c59a63]"
+                            }`}
                         >
-                          Delete
-                        </button>
-                        <button
-                          className="bg-[#c59a63] text-[#293941] border rounded shadow-md px-3 py-1 hover:bg-[#293941] hover:text-[#c59a63]"
-                          onClick={() => handleEdit(staff)}
-                        >
-                          Edit
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                          {staff.role}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="flex gap-1">
+                          <button
+                            className="border bg-[#293941] text-[#c59a63] rounded shadow-md px-2 py-1 hover:bg-[#c59a63] hover:text-[#293941]"
+                            onClick={() => handleDelete(staff.id)}
+                          >
+                            Delete
+                          </button>
+                          <button
+                            className="bg-[#c59a63] text-[#293941] border rounded shadow-md px-3 py-1 hover:bg-[#293941] hover:text-[#c59a63]"
+                            onClick={() => handleEdit(staff)}
+                          >
+                            Edit
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>

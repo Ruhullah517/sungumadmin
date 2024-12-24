@@ -11,8 +11,20 @@ const RoomBooking = () => {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [isDateSelected, setIsDateSelected] = useState(false);
-  const handleBooking = () => {
-    navigate("/room-booking");
+  
+  const handleBooking = (room) => {
+    navigate("/room-booking", {
+      state: {
+        roomData: {
+          roomId: room.id,
+          roomName: room.name,
+          roomNumber: room.number,
+          price: room.price,
+          checkIn: checkIn,
+          checkOut: checkOut
+        }
+      }
+    });
   };
   const fetchRooms = async () => {
     try {
@@ -145,6 +157,7 @@ const RoomBooking = () => {
                         <th className="px-2 text-start">Room No</th>
                         <th className="px-2 text-start">Price</th>
                         <th className="px-2 text-start">Max Capacity</th>
+                        <th className="px-2 text-start">Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -156,6 +169,13 @@ const RoomBooking = () => {
                           <td>{room.number}</td>
                           <td>{room.price}</td>
                           <td>{room.capacity}</td>
+                          <td>
+                            <button
+                              className="border bg-[#c59a63] text-[#293941] rounded shadow-md block focus:outline-none text-left px-2 py-1 hover:bg-[#293941] hover:text-[#c59a63]"
+                              onClick={() => handleBooking(room)}
+                            >
+                              Book Now
+                            </button></td>
                         </tr>
                       ))}
                     </tbody>
@@ -173,4 +193,4 @@ const RoomBooking = () => {
     </div>
   );
 };
-  export default RoomBooking;
+export default RoomBooking;

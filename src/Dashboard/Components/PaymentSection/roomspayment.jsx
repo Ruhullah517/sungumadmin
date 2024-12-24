@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../RoomsBooking/roombooking.css";
 import { useNavigate } from "react-router";
 import axios from "axios";
+import { format } from 'date-fns';
 
 const RoomsPaymentList = () => {
 
@@ -27,6 +28,8 @@ const RoomsPaymentList = () => {
         "http://localhost:5000/api/payments/rooms"
       );
       setRoomPayments(response.data);
+      console.log(roomPayments);
+      
     } catch (error) {
       console.error("Error fetching eventpayments", error);
     }
@@ -52,10 +55,10 @@ const RoomsPaymentList = () => {
 
       console.log('Booking ID:', booking.id);
       console.log('Update Data:', updateData);
-      
+
       const response = await axios.put(`http://localhost:5000/api/payments/rooms/${booking.id}`, updateData);
       console.log('Server Response:', response.data);
-      
+
       alert("Payment successfully received");
       fetchRoomPayments();
     } catch (error) {
@@ -112,6 +115,7 @@ const RoomsPaymentList = () => {
                   <th className="px-2">Booking ID</th>
                   <th className="px-2">Room No</th>
                   <th className="px-2">Booked By</th>
+                  <th className="px-2">Dates</th>
                   <th className="px-2">Account Title</th>
                   <th className="px-2">Account Number</th>
                   <th className="px-2">Payment Date</th>
@@ -124,24 +128,31 @@ const RoomsPaymentList = () => {
               </thead>
               <tbody>
                 {/* Repeat rows dynamically */}
-                {roomPayments.map((booking, index) => (
-                  <tr
-                    key={index}
-                    role="row"
-                    className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                      }`}
-                  >
-                    <td><span className="text-nowrap">RPL-00{booking.id}</span></td>
-                    <td><span className="text-nowrap">{booking.room_number}</span></td>
-                    <td><span className="text-nowrap">{booking.booked_by}</span></td>
-                    <td><span className="text-nowrap">{booking.account_title}</span></td>
-                    <td><span className="text-nowrap">{booking.account_number}</span></td>
-                    <td><span className="text-nowrap">{booking.payment_date}</span></td>
-                    <td><span className="text-nowrap">{booking.total_payment}</span></td>
-                    <td><span className="text-nowrap">{booking.paid_amount}</span></td>
-                    <td><span className="text-nowrap">{(booking.total_payment)-(booking.paid_amount)}</span></td>
-                    <td><span className="text-nowrap">{booking.payment_status}</span></td>
-                    {/* <td>
+                {roomPayments.map((booking, index) => {
+
+                  const date = new Date(booking.payment_date).toISOString().split('T')[0]
+                  return (
+                    <tr
+                      key={index}
+                      role="row"
+                      className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                        }`}
+                    >
+                      <td><span className="text-nowrap">RPL-00{booking.id}</span></td>
+                      <td><span className="text-nowrap">{booking.room_number}</span></td>
+                      <td><span className="text-nowrap">{booking.booked_by}</span></td>
+                      <td>
+                        <div className="text-xs">Check-in: {format(new Date(booking.checkin_date), 'dd/MM/yyyy')}</div>
+                        <div className="text-xs">Check-out: {format(new Date(booking.checkout_date), 'dd/MM/yyyy')}</div>
+                      </td>
+                      <td><span className="text-nowrap">{booking.account_title}</span></td>
+                      <td><span className="text-nowrap">{booking.account_number}</span></td>
+                      <td><span className="text-nowrap">{date}</span></td>
+                      <td><span className="text-nowrap">{booking.total_payment}</span></td>
+                      <td><span className="text-nowrap">{booking.paid_amount}</span></td>
+                      <td><span className="text-nowrap">{(booking.total_payment) - (booking.paid_amount)}</span></td>
+                      <td><span className="text-nowrap">{booking.payment_status}</span></td>
+                      {/* <td>
                       <span
                         className={`px-2 py-1 rounded text-white ${booking.status === "Active"
                           ? "bg-green-500"
@@ -151,22 +162,23 @@ const RoomsPaymentList = () => {
                         {booking.status}
                       </span>
                     </td> */}
-                    <td className="px-2 py-2 text-center">
-                      {booking.payment_status === 'partial' ? (
-                        <div className="bg-[#c59a63] border hover:bg-[#293941] rounded shadow-md">
-                          <button
-                            className="text-[#293941] block focus:outline-none w-full text-left px-2 py-1 hover:text-[#c59a63]"
-                            onClick={() => handlePaymentReceived(booking)}
-                          >
-                            Received
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="text-[#293941] font-semibold text-nowrap">Paid</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                      <td className="px-2 py-2 text-center">
+                        {booking.payment_status === 'partial' ? (
+                          <div className="bg-[#c59a63] border hover:bg-[#293941] rounded shadow-md">
+                            <button
+                              className="text-[#293941] block focus:outline-none w-full text-left px-2 py-1 hover:text-[#c59a63]"
+                              onClick={() => handlePaymentReceived(booking)}
+                            >
+                              Received
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-[#293941] font-semibold text-nowrap">Paid</span>
+                        )}
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>

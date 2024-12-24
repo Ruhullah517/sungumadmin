@@ -177,14 +177,6 @@ const ShowRoom = () => {
                           </button>
                         </div>
                       </td>
-                      {/* <td>
-                        <button
-                          className="bg-[#c59a63] text-[#293941] px-2 py-1 rounded hover:bg-[#293941] hover:text-[#c59a63]"
-                          onClick={handleBooking}
-                        >
-                          Book Now
-                        </button>
-                      </td> */}
                     </tr>
                   );
                 })}

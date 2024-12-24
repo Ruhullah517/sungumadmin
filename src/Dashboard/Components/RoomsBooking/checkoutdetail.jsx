@@ -1,249 +1,218 @@
 import { useForm } from "react-hook-form";
-import axios from 'axios';
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./roombooking.css";
 import PaymentForm from "../PaymenMethod/paymentmethod";
-
-
-
+import axios from "axios";
 
 const BookingDetail = () => {
-  // let [BookingDetail, setBookingDetail] = useState([])
-  let nav = useNavigate();
+  const location = useLocation();
+  const { roomData } = location.state || {};
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  // const userCnic = BookingDetail.cnic;
-  // const NoOfStay = BookingDetail.numberOfDays;
-  // const totalCost = BookingDetail.totalPrice;
-  // const roomName = BookingDetail.roomName;
-  // const roomNo = BookingDetail.roomNo;
-  // const DateCheckIn = new Date(BookingDetail.checkIn);
-  // const DateCheckOut = new Date(BookingDetail.checkOut);
-  // const checkIn = DateCheckIn.toLocaleDateString();
-  // const checkOut = DateCheckOut.toLocaleDateString();
-  // const userId = BookingDetail.userId;
-
-  // const bookingData = async (data) => {
-  //   const paymentStatus = 'Payed';
-  //   const bookingsdata = new FormData();
-  //   bookingsdata.append('userName', data.userName);
-    // bookingsdata.append('email', data.email);
-    // bookingsdata.append('phoneNo', data.phoneNo);
-    // bookingsdata.append('country', data.country);
-    // bookingsdata.append('city', data.city);
-    // bookingsdata.append('paymentMethod', data.paymentMethod);
-    // bookingsdata.append('accountHolderName', data.accountHolderName);
-    // bookingsdata.append('accountNumber', data.accountNumber);
-    // bookingsdata.append('userCnic', data.userCnic = userCnic);
-    // bookingsdata.append('NoOfStay', data.NoOfStay = NoOfStay);
-    // bookingsdata.append('totalCost', data.totalCost = totalCost);
-    // bookingsdata.append('roomName', data.roomName = roomName);
-    // bookingsdata.append('roomNo', data.roomNo = roomNo);
-    // bookingsdata.append('userId', data.userId = userId);
-    // bookingsdata.append('paymentStatus', data.paymentStatus = paymentStatus);
-    // bookingsdata.append('checkIn', data.checkIn = checkIn);
-    // bookingsdata.append('checkOut', data.checkOut = checkOut);
-    // if (data.transactionSlip[0]) { // Ensure there's a file
-    //   bookingsdata.append('transactionSlip', data.transactionSlip[0]);
-    // } else {
-    //   console.error('No transaction slip selected');
-    //   return;
-    // }
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+  const [receiptPreview, setReceiptPreview] = useState(null);
+  const [receiptFile, setReceiptFile] = useState(null);
+  const navigate = useNavigate();
+  // Calculate the number of stays and total amounts
+  const noOfStay = Math.ceil(
+    (new Date(roomData.checkOut) - new Date(roomData.checkIn)) / (1000 * 60 * 60 * 24)
+  );
+  const total = noOfStay * roomData.price;
+  const date = new Date().toISOString().split("T")[0];
+  console.log(date);
 
 
-    
-    // try {
-      //   const response = await axios.post('/checkout', bookingsdata);
-      
-      //   if (response.status === 200) {
-        //     nav('/bookingsuccess');
-        //   }
-        // } catch (error) {
-          //   console.error('Error booking detail:', error.response ? error.response.data : error.message);
-          // }
-          // };
-          
-          
-          
-          // console.log('Data sent to the backend:', bookingsdata);
+  const handleReceiptChange = (e) => {
+    const file = e.target.files[0];
+    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
 
+    if (file) {
+      if (!validImageTypes.includes(file.type)) {
+        alert('Invalid file type. Only JPG, PNG, and GIF are allowed.');
+        return;
+      }
+      if (file.size > maxSize) {
+        alert('File size too large. Maximum size is 5MB.');
+        return;
+      }
+      setReceiptPreview(URL.createObjectURL(file));
+      setReceiptFile(file);
+    }
+  };
 
+  const onSubmit = async (data) => {
+    const formData = new FormData();
 
-  // const { bookingId } = useParams();
+    try {
+      // Add form data
+      formData.append('booked_by', roomData.userName);
+      formData.append('phone', roomData.phone);
+      formData.append('email', roomData.email);
+      formData.append('cnic', roomData.cnic);
+      formData.append('room_number', roomData.roomNumber);
+      formData.append('total_payment', total);
+      formData.append('checkin_date', roomData.checkIn);
+      formData.append('checkout_date', roomData.checkOut);
+      formData.append('receipt', receiptFile); // Append receipt file
+      formData.append('account_title', data.accountHolderName);
+      formData.append('account_number', data.accountNumber);
+      formData.append('payment_date', date);
+      formData.append('paid_amount', (total * 0.3).toFixed(0));
+      formData.append('payment_status', "Half Paid");
 
-  // useEffect(() => {
-  //   const fetchRoom = async () => {
-  //     try {
+      console.log("Request Data:");
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+      const response = await axios.post('http://localhost:5000/api/room-booking-requests', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
 
-  //       const resp = await axios.get('/bookingdetails');
-  //       const foundBooking = resp.data.find(booking => booking._id === bookingId);
+      alert('Booking request submitted successfully!');
+      navigate('/booking-confirmation'); // Redirect to confirmation page
+    } catch (error) {
+      console.error('Error submitting booking:', error);
+      alert(error.response?.data?.error || 'Failed to submit the booking. Please try again.');
+    }
+  };
 
-  //       if (foundBooking) {
-  //         setBookingDetail(foundBooking);
-  //       } else {
-  //         console.error('Booking not found');
-  //       }
-  //     } catch (e) {
-  //       console.error('Error fetching booking details:', e);
+  useEffect(() => {
+    if (roomData) {
+      // Pre-fill form fields with room data
+      setValue("roomName", roomData.roomName);
+      setValue("roomNumber", roomData.roomNumber);
+      setValue("price", roomData.price);
+      setValue("checkIn", roomData.checkIn);
+      setValue("checkOut", roomData.checkOut);
+      setValue("email", roomData.email);
+      setValue("cnic", roomData.cnic);
+      setValue("phoneNo", roomData.phone);
+      setValue("userName", roomData.userName);
+    }
+  }, [roomData, setValue]);
 
-  //     }
-  //   };
-
-  //   if (bookingId) {
-  //     fetchRoom();
-  //   }
-  // }, [bookingId]);
-
-  return <>
-
-
+  return (
     <div className="container mx-auto px-4">
-    <div className="py-5 text-center">
-  <h2 className="text-2xl text-[#293941] font-semibold">Terms & Conditions for Checkout</h2>
-  <p className="text-lg text-gray-600">
-    For bookings made by the admin, 100% payment is required at the time of booking.
-  </p>
-  <p className="text-lg text-gray-600">
-    For direct bookings on website 30% pay on the time of booking, and remaning 70% payment will be made upon arrival at the hotel.
-  </p>
-</div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 ">
+      <div className="py-5 text-center">
+        <h2 className="text-2xl text-[#293941] font-semibold">Terms & Conditions for Checkout</h2>
+        <p className="text-lg text-gray-600">
+          For bookings made by the admin, 100% payment is required at the time of booking.
+        </p>
+        <p className="text-lg text-gray-600">
+          For direct bookings on the website, 30% payment is required at the time of booking, and the remaining 70% upon arrival.
+        </p>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-1 shadow-lg p-3 rounded h-fit">
-          <h4 className="flex justify-center  items-center text-lg font-semibold text-gray-700 mb-3">
-            <span>Your cart</span>
-          </h4>
-          <hr className="my-6" />
+          <h4 className="text-lg font-semibold text-gray-700 mb-3 text-center">Your Cart</h4>
+          <hr className="my-4" />
           <ul className="space-y-3">
-            <li className="flex justify-between items-center bg-gray-100 p-1 rounded ">
-              <div>
-                <h6 className="font-medium">Room Name</h6>
-              </div>
-              <span className="text-gray-600">Family Room</span>
-              {/* <span className="text-gray-600">{BookingDetail.roomName}</span> */}
+            <li className="flex justify-between items-center bg-gray-100 p-2 rounded">
+              <div>Room Name</div>
+              <span className="text-gray-600">{roomData.roomName}</span>
             </li>
-            <li className="flex justify-between items-center bg-gray-100 p-1 rounded">
-              <div>
-                <h6 className="font-medium">Room Price</h6>
-              </div>
-              <span className="text-gray-600">Rs.5000/Night</span>
-              {/* <span className="text-gray-600">Rs.{BookingDetail.roomPrice}/Night</span> */}
+            <li className="flex justify-between items-center bg-gray-100 p-2 rounded">
+              <div>Room Number</div>
+              <span className="text-gray-600">{roomData.roomNumber}</span>
             </li>
-            <li className="flex justify-between items-center bg-gray-100 p-1 rounded">
-              <div>
-                <h6 className="font-medium">Check In</h6>
-              </div>
-              <span className="text-gray-600">08/02/2024</span>
-              {/* <span className="text-gray-600">{checkIn}</span> */}
+            <li className="flex justify-between items-center bg-gray-100 p-2 rounded">
+              <div>Room Price</div>
+              <span className="text-gray-600">Rs.{roomData.price}/Night</span>
             </li>
-            <li className="flex justify-between items-center bg-gray-100 p-1 rounded">
-              <div>
-                <h6 className="font-medium">Check Out</h6>
-              </div>
-              <span className="text-gray-600">10/02/2024</span>
-              {/* <span className="text-gray-600">{checkOut}</span> */}
+            <li className="flex justify-between items-center bg-gray-100 p-2 rounded">
+              <div>Check In</div>
+              <span className="text-gray-600">{roomData.checkIn}</span>
             </li>
-            <li className="flex justify-between items-center bg-[#c2c3c7] p-1 rounded text-[#293941]">
-              <div>
-                <h6 className="font-medium">No Of Stay</h6>
-              </div>
-              <span>2</span>
-              {/* <span>{BookingDetail.numberOfDays}</span> */}
+            <li className="flex justify-between items-center bg-gray-100 p-2 rounded">
+              <div>Check Out</div>
+              <span className="text-gray-600">{roomData.checkOut}</span>
             </li>
-            <hr className="my-6" />
-            <li className="flex justify-between items-center bg-[#c2c3c7] p-1 rounded text-[#293941]">
-              <span>Total Amount (PKR)</span>
-              <strong>10,000</strong>
-              {/* <strong>{BookingDetail.totalPrice}</strong> */}
+            <li className="flex justify-between items-center bg-[#c2c3c7] p-2 rounded text-[#293941]">
+              <div>No Of Stay</div>
+              <span>{noOfStay} Nights</span>
             </li>
-
-            <hr className="my-6" />
-            <li className="flex justify-between items-center bg-[#c2c3c7] text-[#293941] p-1 rounded">
-              <span>Payable Amount (PKR)</span>
-              <strong>3000</strong>
-              {/* <strong>{BookingDetail.totalPrice}</strong> */}
+            <hr className="my-4" />
+            <li className="flex justify-between items-center bg-[#c2c3c7] p-2 rounded text-[#293941]">
+              <div>Total Amount (PKR)</div>
+              <strong>Rs.{total}</strong>
+            </li>
+            <hr className="my-4" />
+            <li className="flex justify-between items-center bg-[#c2c3c7] text-[#293941] p-2 rounded">
+              <div>Payable Amount (30%)</div>
+              <strong>Rs.{(total * 0.3).toFixed(2)}</strong>
             </li>
           </ul>
         </div>
-
         <div className="md:col-span-2 shadow-lg p-4">
-          {/* <h4 className="text-lg font-medium mb-4">Billing address</h4> */}
-          {/* <form onSubmit={handleSubmit(bookingData)} className="space-y-4"> */}
-          <form  className="space-y-4">
-            {/* <div className="grid grid-cols-1 gap-4">
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="font-semibold">First Name</label>
+                <label className="text-[#293941] font-semibold">Name</label>
                 <input
-                  {...register("userName", { required: true })}
+                  {...register("userName")}
                   type="text"
-                  className="block w-full border-gray-300 rounded p-2 focus:ring focus:ring-blue-300"
-                  placeholder="Your Name"
+                  className="block w-full border-gray-300 rounded p-2"
+                  readOnly
                 />
-                {errors.userName && <div className="text-red-600 mt-1">Please Enter Your Name!</div>}
-              </div>
-            </div> */}
-
-            {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="font-semibold">Email</label>
-                <input
-                  {...register("email", { required: true })}
-                  type="email"
-                  className="block w-full border-gray-300 rounded p-2 focus:ring focus:ring-blue-300"
-                  placeholder="Your Email"
-                />
-                {errors.email && <div className="text-red-600 mt-1">Please Enter Your Email!</div>}
               </div>
               <div>
-                <label className="font-semibold">Phone No</label>
+                <label className="text-[#293941] font-semibold">Phone</label>
                 <input
-                  {...register("phoneNo", { required: true })}
-                  type="number"
-                  className="block w-full border-gray-300 rounded p-2 focus:ring focus:ring-blue-300"
-                  placeholder="Your Phone No"
-                />
-                {errors.phoneNo && <div className="text-red-600 mt-1">Please Enter Your Phone No!</div>}
-              </div>
-            </div> */}
-
-            {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="font-semibold">Country</label>
-                <input
-                  {...register("country", { required: true })}
+                  {...register("phoneNo")}
                   type="text"
-                  className="block w-full border-gray-300 rounded p-2 focus:ring focus:ring-blue-300"
-                  placeholder="Country"
+                  className="block w-full border-gray-300 rounded p-2"
+                  readOnly
                 />
-                {errors.country && <div className="text-red-600 mt-1">Please Enter Your Country!</div>}
               </div>
               <div>
-                <label className="font-semibold">City</label>
+                <label className="text-[#293941] font-semibold">Email</label>
                 <input
-                  {...register("city", { required: true })}
+                  {...register("email")}
                   type="text"
-                  className="block w-full border-gray-300 rounded p-2 focus:ring focus:ring-blue-300"
-                  placeholder="City"
+                  className="block w-full border-gray-300 rounded p-2"
+                  readOnly
                 />
-                {errors.city && <div className="text-red-600 mt-1">Please Enter Your City!</div>}
               </div>
-            </div> */}
-
+              <div>
+                <label className="text-[#293941] font-semibold">CNIC</label>
+                <input
+                  {...register("cnic")}
+                  type="text"
+                  className="block w-full border-gray-300 rounded p-2"
+                  readOnly
+                />
+              </div>
+            </div>
             <hr className="my-6" />
-            
             <PaymentForm />
             <hr className="my-6" />
-
+            {/* Receipt Upload */}
+            <div>
+              <label className="text-[#293941] font-semibold">Receipt of Advance Payment</label>
+              <input
+                type="file"
+                {...register("file", { required: true })}
+                accept="image/*"
+                onChange={handleReceiptChange}
+                className="block w-full px-4 py-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+              />
+              {errors.file && <div className="text-red-600 mt-1">Please add receipt</div>}
+              {receiptPreview && (
+                <div className="mt-4">
+                  <img src={receiptPreview} alt="Receipt Preview" className="w-24 h-24 object-cover rounded" />
+                </div>
+              )}
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="text-[#293941] font-semibold">Account Holder Name</label>
                 <input
                   {...register("accountHolderName", { required: true })}
                   type="text"
-                  className="block w-full border-gray-300 rounded p-2 focus:ring focus:ring-blue-300"
+                  className="block w-full border-gray-300 rounded p-2"
                   placeholder="Example: John Alex"
                 />
-                <small className="text-gray-500">Full name as displayed on account</small>
                 {errors.accountHolderName && <div className="text-red-600 mt-1">Please Enter Account Holder Name!</div>}
               </div>
               <div>
@@ -251,44 +220,23 @@ const BookingDetail = () => {
                 <input
                   {...register("accountNumber", { required: true })}
                   type="number"
-                  className="block w-full border-gray-300 rounded p-2 focus:ring focus:ring-blue-300"
+                  className="block w-full border-gray-300 rounded p-2"
                   placeholder="Example: 11223344"
                 />
-                {errors.accountNumber && <div className="text-red-600 font-sm mt-1">Please Enter Your Account Number!</div>}
+                {errors.accountNumber && <div className="text-red-600 mt-1">Please Enter Your Account Number!</div>}
               </div>
             </div>
-
-            {/* <div>
-              <label className="font-semibold">Upload Transaction Slip</label>
-              <input
-                {...register("transactionSlip", { required: true })}
-                type="file"
-                className="block w-full border-gray-300 rounded p-2"
-              />
-              {errors.transactionSlip && <div className="text-red-600 mt-1">Please Upload Transaction Slip!</div>}
-            </div> */}
-
             <button
               type="submit"
-              onClick={()=>{nav('/bookingsuccess');}}
               className="w-full bg-[#c59a63] text-[#293941] py-2 px-4 rounded hover:bg-[#293941] hover:text-[#c59a63]"
             >
-              
               Continue to Checkout
             </button>
           </form>
         </div>
       </div>
     </div>
-    <br />
-
-
-
-
-
-
-
-  </>
-}
+  );
+};
 
 export default BookingDetail;
