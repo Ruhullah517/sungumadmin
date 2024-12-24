@@ -58,7 +58,6 @@ export default function SideBar({ isOpen, setIsOpen }) {
             links={[
               { href: "/all-bookings", label: "Available Rooms" },
               {href:'/room-booking-requests', label: "Booking Requests"},
-              { href: "/all-rooms", label: "Book Room" },
             ]}
           />
 

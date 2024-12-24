@@ -47,16 +47,6 @@ const Home = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-  //   const [showSidebar, setShowSidebar] = useState(false);
-  //   let dispatch = useDispatch();
-  //   const handleToggleSidebar = () => {
-  //     setShowSidebar(!showSidebar);
-
-  //   };
-
-  //   let currentUser = useSelector((store) => {
-  //     return store.userSection.currentUser;
-  //   })
 
 
   return (<>

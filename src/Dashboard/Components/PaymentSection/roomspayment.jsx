@@ -92,12 +92,12 @@ const RoomsPaymentList = () => {
             </div>
 
 
-            <a
+            {/* <a
               onClick={handleBooking}
               className="btn bg-[#c59a63] text-[#293941] py-2 px-4 rounded hover:bg-[#293941] hover:text-[#c59a63]"
             >
               Book Room
-            </a>
+            </a> */}
 
 
           </div>
