@@ -10,17 +10,28 @@ import {
   YAxis,
 } from "recharts";
 
-const data = [
-  { month: "Jan", roomIncome: 25000, eventIncome: 15000 },
-  { month: "Feb", roomIncome: 28000, eventIncome: 18000 },
-  { month: "Mar", roomIncome: 30000, eventIncome: 20000 },
-  { month: "Apr", roomIncome: 32000, eventIncome: 22000 },
-  { month: "May", roomIncome: 35000, eventIncome: 25000 },
-];
+export function IncomeChart({ roomPayments, eventPayments }) {
+  const data = [
+    { month: "Jan", roomIncome: 0, eventIncome: 0 },
+    { month: "Feb", roomIncome: 0, eventIncome: 0 },
+    { month: "Mar", roomIncome: 0, eventIncome: 0 },
+    { month: "Apr", roomIncome: 0, eventIncome: 0 },
+    { month: "May", roomIncome: 0, eventIncome: 0 },
+  ];
 
-export function IncomeChart() {
+  // Calculate income for each month
+  roomPayments.forEach(payment => {
+    const monthIndex = new Date(payment.payment_date).getMonth();
+    data[monthIndex].roomIncome += parseFloat(payment.paid_amount);
+  });
+
+  eventPayments.forEach(payment => {
+    const monthIndex = new Date(payment.payment_date).getMonth();
+    data[monthIndex].eventIncome += parseFloat(payment.paid_amount);
+  });
+
   return (
-    <div className=" rounded-lg p-4 bg-white">
+    <div className="rounded-lg p-4 bg-white">
       <div className="mb-4">
         <h2 className="text-lg text-[#293941] font-bold">Income Overview</h2>
         <p className="text-sm text-[#293941]">

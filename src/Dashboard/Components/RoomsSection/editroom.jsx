@@ -7,6 +7,7 @@ function EditRoom({ room, onSave, onHide }) {
     price: room.price || '',
     description: room.description || '',
     capacity: room.capacity || '',
+    number_of_beds: room.number_of_beds || '',
   });
   const [images, setImages] = useState(null);
   const [existingImages] = useState(JSON.parse(room.images || '[]'));
@@ -95,6 +96,19 @@ function EditRoom({ room, onSave, onHide }) {
               type="number"
               name="price"
               value={formData.price}
+              onChange={handleChange}
+              className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:outline-none"
+            />
+          </div>
+          {/* no of beds */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              No of Beds:
+            </label>
+            <input
+              type="number"
+              name="number_of_beds"
+              value={formData.number_of_beds}
               onChange={handleChange}
               className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:outline-none"
             />

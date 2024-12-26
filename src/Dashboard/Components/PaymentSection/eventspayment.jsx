@@ -2,211 +2,14 @@ import React, { useEffect, useState } from "react";
 import "../RoomsBooking/roombooking.css";
 import { useNavigate } from "react-router";
 import axios from "axios";
-// import axios from "axios";
-// import { toast, Flip } from "react-toastify";
-
-// const Transactions = () => {
-//   const [datas, setDatas] = useState([]);
-//   const [showModal, setShowModal] = useState(false);
-//   const [currentImage, setCurrentImage] = useState("");
-
-//   const handleImageClick = (image) => {
-//     setCurrentImage(image);
-//     setShowModal(true);
-//   };
-
-//   const handleModalClose = () => {
-//     setShowModal(false);
-//     setCurrentImage("");
-//   };
-
-//   const getData = async () => {
-//     try {
-//       const response = await axios.get("/checkoutdetail");
-//       setDatas(response.data);
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     getData();
-//   }, []);
-
-//   const updateTransactionStatus = async (transactionId, status) => {
-//     try {
-//       const response = await axios.put("/update-transaction-status", {
-//         trID: transactionId,
-//         status,
-//       });
-
-//       if (response.status === 200) {
-//         const updatedDatas = datas.map((transaction) =>
-//           transaction._id === transactionId
-//             ? { ...transaction, paymentStatus: status }
-//             : transaction
-//         );
-//         setDatas(updatedDatas);
-//         toast.success(`Transaction status updated to ${status}`, {
-//           transition: Flip,
-//           autoClose: 1000,
-//           position: "bottom-left",
-//           theme: "dark",
-//         });
-//       }
-//     } catch (error) {
-//       toast.error("Error updating transaction status", {
-//         transition: Flip,
-//         autoClose: 3000,
-//         position: "bottom-left",
-//         theme: "dark",
-//       });
-//     }
-//   };
-
-//   const handleCheckout = async (bookingId) => {
-//     try {
-//       const response = await axios.put("/checkout-user", { bookingId: bookingId });
-//       alert("Checkout successful");
-//     } catch (error) {
-//       alert("Failed to checkout");
-//     }
-//   };
-
-//   return (
-//     <>
-//     <div className="my-6 text-center">
-//       <h2 className="text-3xl font-semibold text-gray-800">Transactions</h2>
-//     </div>
-
-//     <div className="overflow-x-auto px-4">
-//       <table className="min-w-full table-auto border-collapse bg-white rounded-xl shadow-lg">
-//         <thead className="bg-gray-200">
-//           <tr>
-//             <th className="px-4 py-2 text-left">Transaction Slip</th>
-//             <th className="px-4 py-2 text-left">RoomNo</th>
-//             <th className="px-4 py-2 text-left">Room Type</th>
-//             <th className="px-4 py-2 text-left">Customer Email</th>
-//             <th className="px-4 py-2 text-left">Account Holder Name</th>
-//             <th className="px-4 py-2 text-left">Subtotal</th>
-//             <th className="px-4 py-2 text-left">Payment Status</th>
-//             <th className="px-4 py-2 text-left">Check Out</th>
-//             <th className="px-4 py-2 text-left">Date Of Submission</th>
-//             <th className="px-4 py-2 text-left">Actions</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {datas.map((transaction) => (
-//             <tr className="border-b hover:bg-gray-50" key={transaction._id}>
-//               <td
-//                 className="px-4 py-2 cursor-pointer"
-//                 onClick={() => handleImageClick(transaction.transactionSlip)}
-//               >
-//                 <img
-//                   src={transaction.transactionSlip}
-//                   alt="Transaction Slip"
-//                   className="w-16 h-16 object-cover rounded-lg hover:shadow-md"
-//                 />
-//               </td>
-//               <td className="px-4 py-2">{transaction.roomNo}</td>
-//               <td className="px-4 py-2">{transaction.roomName}</td>
-//               <td className="px-4 py-2">{transaction.email}</td>
-//               <td className="px-4 py-2">{transaction.accountHolderName}</td>
-//               <td className="px-4 py-2">RS.{transaction.totalCost}</td>
-//               <td
-//                 className={`px-4 py-2 font-medium ${
-//                   transaction.paymentStatus === "Pending"
-//                     ? "text-blue-500"
-//                     : transaction.paymentStatus === "Success"
-//                     ? "text-green-500"
-//                     : transaction.paymentStatus === "Rejected"
-//                     ? "text-red-500"
-//                     : "text-black"
-//                 }`}
-//               >
-//                 {transaction.paymentStatus}
-//               </td>
-//               <td
-//                 className={`px-4 py-2 font-medium ${
-//                   transaction.checkOut === "Checked Out" ? "text-red-500" : "text-black"
-//                 }`}
-//               >
-//                 {transaction.checkOut}
-//               </td>
-//               <td className="px-4 py-2">
-//                 {transaction.updatedAt.slice(0, 10).split("-").reverse().join("/")}
-//               </td>
-//               {transaction.checkOut === "Checked Out" ? (
-//                 <td className="px-4 py-2 font-semibold text-center text-gray-700">
-//                   Check Out Confirmed
-//                 </td>
-//               ) : (
-//                 <td className="px-4 py-2 flex space-x-2">
-//                   <button
-//                     className="bg-green-500 text-white py-1 px-3 rounded-md hover:bg-green-600"
-//                     onClick={() => updateTransactionStatus(transaction._id, "Success")}
-//                   >
-//                     Accept
-//                   </button>
-//                   <button
-//                     className="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600"
-//                     onClick={() => updateTransactionStatus(transaction._id, "Rejected")}
-//                   >
-//                     Reject
-//                   </button>
-//                   <button
-//                     className="bg-yellow-500 text-white py-1 px-3 rounded-md hover:bg-yellow-600"
-//                     onClick={() => handleCheckout(transaction._id)}
-//                   >
-//                     Check Out
-//                   </button>
-//                 </td>
-//               )}
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     </div>
-
-//     {/* Modal for displaying the transaction slip image */}
-//     {showModal && (
-//       <div
-//         className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-//         onClick={handleModalClose}
-//       >
-//         <div
-//           className="bg-white p-4 rounded-lg relative shadow-lg max-w-sm"
-//           onClick={(e) => e.stopPropagation()}
-//         >
-//           <button
-//             onClick={handleModalClose}
-//             className="absolute top-2 right-2 p-1 text-gray-500 hover:text-gray-700"
-//           >
-//             X
-//           </button>
-//           <img
-//             src={currentImage}
-//             className="w-full h-auto rounded-lg"
-//             alt="Transaction Slip"
-//           />
-//         </div>
-//       </div>
-//     )}
-//   </>
-
-//   );
-// };
-
-// export default Transactions;
-
-
-
+import { format } from 'date-fns'
 
 const EventPaymentList = () => {
 
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate()
   const [eventPayments, setEventPayments] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -269,7 +72,10 @@ const EventPaymentList = () => {
       alert(`Failed to update payment: ${error.response?.data?.message || error.message}`);
     }
   };
-
+  const filteredEvents = eventPayments.filter((event) =>
+    event.event_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    event.booked_by.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="page-wrapper bg-[#c2c3c7] min-h-screen">
@@ -285,6 +91,8 @@ const EventPaymentList = () => {
                   type="text"
                   className="focus:outline-none form-control"
                   placeholder="Search.."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 <span className="input-group-text">
                   <a href="/react/demo/guest-list">
@@ -310,7 +118,8 @@ const EventPaymentList = () => {
                   <th className="px-2 text-start">Booking Date</th>
                   <th className="px-2 text-start">Menu</th>
                   <th className="px-2 text-start">Stage</th>
-                  <th className="px-2 text-start">NO. of Guests</th>
+                  <th className="px-2 text-start">Services</th>
+                  <th className="px-2 text-start">Guests</th>
                   <th className="px-2 text-start">Account Detail</th>
                   <th className="px-2 text-start">Payment Date</th>
                   <th className="px-2 text-start">Payment Detail</th>
@@ -321,9 +130,7 @@ const EventPaymentList = () => {
               <tbody>
                 {/* Repeat rows dynamically */}
                 {
-                  eventPayments.map((booking, index) => {
-                    const payment_date = new Date(booking.payment_date).toISOString().split('T')[0];
-                    const booking_date = new Date(booking.booking_date).toISOString().split('T')[0];
+                  filteredEvents.map((booking, index) => {
 
                     return (
                       <tr
@@ -341,7 +148,7 @@ const EventPaymentList = () => {
                           <div className="text-nowrap">{booking.cnic}</div>
                         </td>
                         <td>
-                          <div className="text-nowrap font-semibold">{booking_date}</div>
+                          <div className="text-nowrap font-semibold">{format(new Date(booking.booking_date), 'dd/MM/yyyy')}</div>
                           <div className="text-nowrap font-semibold">{booking.booking_time}</div>
                         </td>
                         <td>
@@ -351,13 +158,16 @@ const EventPaymentList = () => {
                           <div className="text-nowrap">{booking.stage}</div>
                         </td>
                         <td>
+                          <div className="text-nowrap">{booking.services}</div>
+                        </td>
+                        <td>
                           <div className="text-nowrap">{booking.number_of_guests}</div>
                         </td>
                         <td>
                           <div className="text-nowrap">{booking.account_title}</div>
                           <div className="text-nowrap">{booking.account_number}</div>
                         </td>
-                        <td><span className="text-nowrap">{payment_date}</span></td>
+                        <td><span className="text-nowrap">{format(new Date(booking.payment_date), 'dd/MM/yyyy')}</span></td>
                         <td>
                           <div className="text-nowrap">TOTAL: {booking.total_payment}</div>
                           <div className="text-nowrap">PAID: {booking.paid_amount}</div>

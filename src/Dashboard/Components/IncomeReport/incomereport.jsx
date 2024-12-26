@@ -1,12 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IncomeTable } from "./incometable";
 import { IncomeChart } from "./incomechart";
+import axios from "axios";
 
 export default function IncomeReport() {
     const [activeTab, setActiveTab] = useState("table");
-    const weeklyIncome = 12500;
-    const monthlyIncome = 52000;
-    const yearlyIncome = 624000;
+    const [weeklyIncome, setWeeklyIncome] = useState(0);
+    const [monthlyIncome, setMonthlyIncome] = useState(0);
+    const [yearlyIncome, setYearlyIncome] = useState(0);
+    const [roomPayments, setRoomPayments] = useState([]);
+    const [eventPayments, setEventPayments] = useState([]);
+
+    // Fetch income data from room and event payments
+    const fetchIncomeData = async () => {
+        try {
+            const roomResponse = await axios.get("http://localhost:5000/api/payments/rooms");
+            const eventResponse = await axios.get("http://localhost:5000/api/payments/events");
+
+            const roomPayments = roomResponse.data;
+            const eventPayments = eventResponse.data;
+
+            // Calculate total income
+            const totalRoomIncome = roomPayments.reduce((acc, payment) => acc + parseFloat(payment.paid_amount), 0);
+            const totalEventIncome = eventPayments.reduce((acc, payment) => acc + parseFloat(payment.paid_amount), 0);
+
+            // Update income states
+            setWeeklyIncome(totalRoomIncome + totalEventIncome); // Adjust this logic as needed for weekly
+            setMonthlyIncome(totalRoomIncome + totalEventIncome); // Adjust this logic as needed for monthly
+            setYearlyIncome(totalRoomIncome + totalEventIncome); // Adjust this logic as needed for yearly
+
+            // Store payments for table and chart
+            setRoomPayments(roomPayments);
+            setEventPayments(eventPayments);
+        } catch (error) {
+            console.error("Error fetching income data:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchIncomeData();
+    }, []);
 
     return (
         <div className="page-wrapper bg-[#c2c3c7] min-h-screen">
@@ -52,12 +85,12 @@ export default function IncomeReport() {
                     </div>
                     {activeTab === "table" && (
                         <div className="space-y-4">
-                            <IncomeTable />
+                            <IncomeTable roomPayments={roomPayments} eventPayments={eventPayments} />
                         </div>
                     )}
                     {activeTab === "chart" && (
                         <div className="space-y-4">
-                            <IncomeChart />
+                            <IncomeChart roomPayments={roomPayments} eventPayments={eventPayments} />
                         </div>
                     )}
                 </div>

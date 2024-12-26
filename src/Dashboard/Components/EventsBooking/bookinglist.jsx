@@ -45,9 +45,6 @@ const EventBookingList = () => {
       console.log(response.data);
       setAvailable(response.data.available)
       setIsDateSelected(true);
-      // if (response.data.availableHalls?.length === 0) {
-      //   setError("No halls available for the selected date and time session");
-      // }
     } catch (error) {
       console.error("Error checking hall availability:", error);
       setError(error.response?.data?.error || "Failed to check hall availability");
@@ -132,7 +129,7 @@ const EventBookingList = () => {
                   Available Halls
                 </h4>
                 <div className="text-sm text-gray-600">
-                  {checkIn} {timeSession === "Morning" ? "08:00" : "17:00"}
+                  {checkIn} {timeSession === "Morning" ? "Morning" : "Evening"}
                 </div>
               </div>
             </div>

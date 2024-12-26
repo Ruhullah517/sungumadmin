@@ -36,6 +36,7 @@ const AddRoom = () => {
            formData.append('description', data.description);
            formData.append('capacity', data.capacity);
            formData.append('status', "available");
+           formData.append('number_of_beds', data.number_of_beds);
             // Append images
            files.forEach((file) => {
                formData.append('images', file);
@@ -127,6 +128,19 @@ const AddRoom = () => {
                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:outline-none"
                    />
                    {errors.capacity && <div className="text-red-500 text-sm mt-1">{errors.capacity.message}</div>}
+               </div>
+               {/* No of beds */}
+               <div className="mb-4">
+                   <input
+                       {...register('number_of_beds', { 
+                           required: 'number_of_beds is required',
+                           min: { value: 1, message: 'number_of_beds must be at least 1' }
+                       })}
+                       placeholder="number of beds"
+                       type="number"
+                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+                   />
+                   {errors.number_of_beds && <div className="text-red-500 text-sm mt-1">{errors.number_of_beds.message}</div>}
                </div>
                 {/* Room Images */}
                <div className="mb-4">

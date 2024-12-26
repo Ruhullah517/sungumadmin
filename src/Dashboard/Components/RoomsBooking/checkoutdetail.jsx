@@ -38,6 +38,8 @@ const BookingDetail = () => {
       }
       setReceiptPreview(URL.createObjectURL(file));
       setReceiptFile(file);
+      console.log(file);
+      
     }
   };
 
@@ -58,7 +60,7 @@ const BookingDetail = () => {
       formData.append('account_title', data.accountHolderName);
       formData.append('account_number', data.accountNumber);
       formData.append('payment_date', date);
-      formData.append('paid_amount', (total * 0.3).toFixed(0));
+      formData.append('paid_amount', (total * 0.35).toFixed(0));
       formData.append('payment_status', "Half Paid");
 
       console.log("Request Data:");

@@ -16,7 +16,7 @@ const EventBookingRequests = () => {
         try {
             const response = await axios.get('http://localhost:5000/api/event-booking-requests');
             setBookingRequests(response.data.data);
-            console.log(bookingRequests);
+            console.log("bookingRequests",bookingRequests);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching booking requests:', error);

@@ -20,7 +20,7 @@ const EventMenu = () => {
     try {
       const updatedMenu = {
         category: editingCourse.category,
-        items: editingCourse.items.map((item) => ({ name: item.name })),
+        items: editingCourse.items.map(item => item),
       };
       const response = await axios.put(
         `http://localhost:5000/api/menu/event/${eventMenus[menuIndex]?.id}`, // Use optional chaining to avoid errors
@@ -83,7 +83,7 @@ const EventMenu = () => {
               <h5 className="text-xl text-[#293941] font-bold">{menu.category}</h5>
               <ul className="list-disc pl-6 text-gray-500">
                 {menu.items.map((item, idx) => (
-                  <li key={idx}>{item.name}</li>
+                  <li key={idx}>{item}</li>
                 ))}
               </ul>
               <div className="flex gap-2 mt-2">
@@ -124,13 +124,13 @@ const EventMenu = () => {
               <h5 className=" font-bold">Items</h5>
               {editingCourse.items?.map((item, idx) => (
                 <input
-                  key={idx}
+                  key={item.id || idx}
                   type="text"
                   className="w-full border px-3 py-2 mb-2 rounded"
-                  value={item.name}
+                  value={item}
                   onChange={(e) => {
                     const updatedItems = [...editingCourse.items];
-                    updatedItems[idx].name = e.target.value;
+                    updatedItems[idx] = e.target.value;
                     setEditingCourse({ ...editingCourse, items: updatedItems });
                   }}
                   placeholder={`Item ${idx + 1}`}
@@ -140,7 +140,7 @@ const EventMenu = () => {
                 onClick={() =>
                   setEditingCourse({
                     ...editingCourse,
-                    items: [...editingCourse.items, { name: "" }],
+                    items: [...editingCourse.items, ""]
                   })
                 }
                 className="btn bg-[#c2c3c7] text-white py-1 px-3 rounded mt-2"

@@ -144,6 +144,7 @@ const ShowRoom = () => {
                   <th className="px-2 text-start">Room Name</th>
                   <th className="px-2 text-start">Room No</th>
                   <th className="px-2 text-start">Price</th>
+                  <th className="px-2 text-start">No of Beds</th>
                   <th className="px-2 text-start">Max Capacity</th>
                   <th className="px-2 text-start">Actions</th>
                   {/* <th className="px-2 text-start">Booking</th> */}
@@ -151,6 +152,7 @@ const ShowRoom = () => {
               </thead>
               <tbody>
                 {filteredRooms.map((room) => {
+                  
                   return (
                     <tr key={room.id} role="row">
                       <td>RL-00{room.id}</td>
@@ -160,6 +162,7 @@ const ShowRoom = () => {
                       <td>{room.name}</td>
                       <td>{room.number}</td>
                       <td>{room.price}</td>
+                      <td>{room.number_of_beds}</td>
                       <td>{room.capacity}</td>
                       <td>
                         <div className="flex gap-2">

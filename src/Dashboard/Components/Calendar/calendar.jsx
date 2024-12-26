@@ -17,7 +17,7 @@ export default function Calendar({ mode = "month" }) {
         const response = await axios.get("http://localhost:5000/api/payments/events");
         const fetchedEvents = response.data.map((event) => ({
           ...event,
-          date: new Date(event.booked_date), // Convert string to Date object
+          date: new Date(event.booking_date), // Convert string to Date object
         }));
         setEvents(fetchedEvents);
       } catch (error) {
@@ -171,7 +171,7 @@ export default function Calendar({ mode = "month" }) {
                       event.color || "bg-[#c59a63] text-[#293941]"
                     )}
                   >
-                    {event.time} {event.event_name}
+                    {event.booking_time} {event.event_name}
                   </div>
                 ))}
               </div>

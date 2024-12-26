@@ -1,111 +1,136 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-// import EventMenu from './eventmenu';
-import EventMenu from './eventmenu';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
 const EventBookingPage = () => {
-    const [clientName, setClientName] = useState('');
-    const [clientEmail, setClientEmail] = useState('');
-    const [clientPhone, setClientPhone] = useState('');
-    const [clientCnic, setClientCnic] = useState('');
-
-    const [eventType, setEventType] = useState('Wedding');
-    const [bookingDate, setBookingDate] = useState(null);
-    const [timeSlot, setTimeSlot] = useState('');
-    const [menuSelected, setMenuSelected] = useState(false);
-    const [stageChecked, setStageChecked] = useState(false);
-    const [guestCount, setGuestCount] = useState(10);
-    const [menuPrice, setMenuPrice] = useState(0); // State to store selected menu price
+    const location = useLocation();
+    const { bookingData } = location.state || {};
+    const { register, handleSubmit, control, watch, formState: { errors }, setValue } = useForm();
     const navigate = useNavigate();
+
+
+    useEffect(() => {
+        if (bookingData) {
+            // Pre-fill the form fields with room data
+            setValue("checkIn", bookingData.checkIn);
+            setValue("time", bookingData.timeSession);
+
+        }
+    }, [bookingData, setValue]);
 
     const eventPrices = {
         Wedding: 25000,
-        Birthday: 20000,
-        Meeting: 10000,
-        Other: 15000,
+        Birthday: 25000,
+        Meeting: 25000,
+        Other: 25000,
     };
 
-    const handleGuestChange = (increment) => {
-        setGuestCount((prev) => Math.max(10, prev + increment));
-    };
+    const watchEventType = watch('event-name', 'Wedding');
+    const watchStageChecked = watch('stage'); 
+    const watchServices = watch('services');
 
-    const handleMenuConfirm = (menuName, totalPrice) => {
-        setMenuPrice(totalPrice); // Update menu price based on selected menu
-    };
+    const total_payment = () => {
+        let total = eventPrices[watchEventType]; // Event type price
 
-    const calculateTotal = () => {
-        let total = eventPrices[eventType] + menuPrice;
-
-        // Add stage price
-        if (stageChecked) {
-            total += 5000; // Custom stage cost
+        // Subtract 20,000 if custom stage is checked
+        if (watchStageChecked) {
+            total += 20000; // Custom stage discount
+        }
+        if (watchServices) {
+            total += 25000;
         }
 
         return total;
     };
 
+    const onSubmit = (data) => {
+        const totalPrice = total_payment();
+        console.log(data);
+
+        navigate('/event-payment-detail', {
+            state: {
+                eventData: {
+                    ...data,
+                    totalPrice: totalPrice,
+                    hallPrice: eventPrices[watchEventType]
+                }
+            },
+        });
+    };
+
     return (
         <div className="flex w-full pt-6 bg-[#c2c3c7]">
-            <div className="w-[40%] hidden md:block ">
+            <div className="w-[40%] hidden lg:block">
                 <img src="images/image_6.jpg" alt="" />
             </div>
-            <div className="p-2 lg:p-6 md:p-4 flex flex-col justify-center items-center bg-white w-[80%] lg:w-[50%] m-auto rounded-xl shadow-lg">
-                <h1 className="text-3xl text-[#c59a63] font-bold mb-4">Event Booking Page</h1>
-                <div className='w-full flex gap-4'>
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="p-2  lg:p-6 md:p-4 flex flex-col justify-center items-center bg-white w-[100%] m-2 lg:w-[50%] lg:m-auto rounded-xl shadow-lg"
+            >
+                <h1 className="md:text-3xl text-lg text-[#c59a63] font-bold mb-4">Event Booking Page</h1>
+
+                {/* Client Name */}
+                <div className='md:flex w-full gap-3'>
                     <div className="mb-4 w-full">
-                        <label className="block text-lg text-[#293941] font-semibold mb-2">Booking By</label>
+                        <label className="block md:text-lg text-sm text-[#293941] font-semibold mb-2">Booking By</label>
                         <input
                             type="text"
-                            className="w-full p-2 border rounded"
+                            className={`w-full p-2 border rounded ${errors.booked_by ? 'border-red-500' : ''}`}
                             placeholder="Enter your name"
-                            value={clientName}
-                            onChange={(e) => setClientName(e.target.value)}
+                            {...register('booked_by', { required: 'Name is required' })}
                         />
+                        {errors.booked_by && (
+                            <span className="text-red-500 text-sm">{errors.booked_by.message}</span>
+                        )}
                     </div>
                     <div className="mb-4 w-full">
-                        <label className="block text-lg text-[#293941] font-semibold mb-2">Customer Email</label>
+                        <label className="block md:text-lg text-sm text-[#293941] font-semibold mb-2">User Email</label>
                         <input
-                            type="text"
-                            className="w-full p-2 border rounded"
+                            type="email"
+                            className={`w-full p-2 border rounded ${errors.email ? 'border-red-500' : ''}`}
                             placeholder="Enter your email"
-                            value={clientEmail}
-                            onChange={(e) => setClientEmail(e.target.value)}
+                            {...register('email', { required: 'Email is required' })}
                         />
+                        {errors.email && (
+                            <span className="text-red-500 text-sm">{errors.email.message}</span>
+                        )}
                     </div>
                 </div>
-                <div className='w-full flex gap-4'>
-
+                <div className='md:flex w-full gap-3'>
                     <div className="mb-4 w-full">
-                        <label className="block text-lg text-[#293941] font-semibold mb-2">Customer Phone</label>
+                        <label className="block md:text-lg text-sm text-[#293941] font-semibold mb-2">Phone Number</label>
                         <input
-                            type="text"
-                            className="w-full p-2 border rounded"
+                            type="number"
+                            className={`w-full p-2 border rounded ${errors.phone ? 'border-red-500' : ''}`}
                             placeholder="Enter your phone"
-                            value={clientPhone}
-                            onChange={(e) => setClientPhone(e.target.value)}
+                            {...register('phone', { required: 'Phone is required' })}
                         />
+                        {errors.phone && (
+                            <span className="text-red-500 text-sm">{errors.phone.message}</span>
+                        )}
                     </div>
                     <div className="mb-4 w-full">
-                        <label className="block text-lg text-[#293941] font-semibold mb-2">Customer CNIC</label>
+                        <label className="block text-sm md:text-lg text-[#293941] font-semibold mb-2">CNIC/PassPort</label>
                         <input
-                            type="text"
-                            className="w-full p-2 border rounded"
-                            placeholder="Enter your cnic"
-                            value={clientCnic}
-                            onChange={(e) => setClientCnic(e.target.value)}
+                            type="number"
+                            className={`w-full p-2 border rounded ${errors.cnic ? 'border-red-500' : ''}`}
+                            placeholder="Enter your CNIC/PassPort"
+                            {...register('cnic', { required: 'CNIN/PassPort is required' })}
                         />
+                        {errors.cnic && (
+                            <span className="text-red-500 text-sm">{errors.cnic.message}</span>
+                        )}
                     </div>
                 </div>
-                <div className='w-full flex gap-4'>
-
+                {/* Event Type */}
+                <div className='flex w-full gap-3'>
                     <div className="mb-4 w-full">
-                        <label className="block text-lg text-[#293941] font-semibold mb-2">Event Type</label>
+                        <label className="block text-sm md:text-lg text-[#293941] font-semibold mb-2">Event Type</label>
                         <select
                             className="w-full p-2 border rounded"
-                            value={eventType}
-                            onChange={(e) => setEventType(e.target.value)}
+                            {...register('event_name')}
                         >
                             <option value="Wedding">Wedding</option>
                             <option value="Birthday">Birthday</option>
@@ -114,96 +139,119 @@ const EventBookingPage = () => {
                         </select>
                     </div>
 
+                    {/* Booking Date */}
                     <div className="mb-4 w-full">
-                        <label className="block text-lg text-[#293941] font-semibold mb-2">Select Date</label>
-                        <DatePicker
-                            selected={bookingDate}
-                            onChange={(date) => setBookingDate(date)}
+                        <label className="block text-sm md:text-lg text-[#293941] font-semibold mb-2">Select Date</label>
+                        <input
+                            type='date'
+                            {...register("checkIn", { required: true })}
                             className="w-full p-2 border rounded"
-                            placeholderText="Select a date"
+                            readOnly
                         />
+
+                        {errors.booked_date && (
+                            <span className="text-red-500 text-sm">{errors.booked_date.message}</span>
+                        )}
+                    </div>
+
+                    {/* Time Slot */}
+                    <div className="mb-2 w-full">
+                        <label className="block text-sm mb-2 text-[#293941] md:text-lg font-semibold">Time Slot</label>
+                        <input
+                            type="text"
+                            className="w-full p-2 border rounded"
+                            {...register('time', { required: 'Time slot is required' })}
+                            readOnly
+                        />
+                        {errors.time && (
+                            <span className="text-red-500 text-sm">{errors.time.message}</span>
+                        )}
                     </div>
                 </div>
-                <div className='w-full flex gap-4'>
-                    {bookingDate && (
-                        <div className="mb-4 w-full">
-                            <label className="block text-[#293941] text-lg font-semibold mb-2">Time Slot</label>
-                            <div className="flex gap-4">
+                {/* Guest Count */}
+                <div className=" mb-4 w-full">
+                    <label className="block text-[#293941] md:text-lg text-sm font-semibold mb-2">Number of Guests</label>
+                    <Controller
+                        control={control}
+                        name="number_of_guests"
+                        defaultValue={10}
+                        render={({ field }) => (
+                            <div className="flex items-center gap-4">
                                 <button
-                                    className={`px-4 text-[#293941] py-2  rounded ${timeSlot === 'Morning' ? 'bg-[#293941]  text-[#c59a63]' : 'bg-[#c59a63]'
-                                        }`}
-                                    onClick={() => setTimeSlot('Morning')}
+                                    type="button"
+                                    className="px-4 text-[#293941] py-2 bg-[#c59a63] rounded hover:bg-[#293941] hover:text-[#c59a63]"
+                                    onClick={() => field.onChange(Math.max(10, field.value - 10))}
                                 >
-                                    Morning
+                                    -
                                 </button>
+                                <span className="text-xl">{field.value}</span>
                                 <button
-                                    className={`px-4 text-[#293941] py-2 rounded ${timeSlot === 'Evening' ? 'bg-[#293941]  text-[#c59a63]' : ' bg-[#c59a63]'
-                                        }`}
-                                    onClick={() => setTimeSlot('Evening')}
+                                    type="button"
+                                    className="px-4 text-[#293941] py-2 bg-[#c59a63] rounded hover:bg-[#293941] hover:text-[#c59a63]"
+                                    onClick={() => field.onChange(field.value + 10)}
                                 >
-                                    Evening
+                                    +
                                 </button>
                             </div>
-                        </div>
-                    )}
-                    <div className="mb-4 w-full">
-                        <label className="block text-[#293941] text-lg font-semibold mb-2">Number of Guests</label>
-                        <div className="flex items-center gap-4">
-                            <button
-                                className="px-4 text-[#293941] py-2 bg-[#c59a63] rounded hover:bg-[#293941] hover:text-[#c59a63]"
-                                onClick={() => handleGuestChange(-10)}
-                            >
-                                -
-                            </button>
-                            <span className="text-xl">{guestCount}</span>
-                            <button
-                                className="px-4 text-[#293941] py-2 bg-[#c59a63] rounded hover:bg-[#293941] hover:text-[#c59a63]"
-                                onClick={() => handleGuestChange(10)}
-                            >
-                                +
-                            </button>
-                        </div>
-                    </div>
+                        )}
+                    />
                 </div>
-                <div className='w-full flex gap-4'>
 
+                {/* Custom Stage */}
+                <div className='md:flex w-full gap-3'>
+                    {/* Checkbox for Custom Stage */}
                     <div className="mb-4 w-full">
                         <label className="text-[#293941] flex items-center">
                             <input
                                 type="checkbox"
-                                className="mr-2"
-                                checked={menuSelected}
-                                onChange={(e) => setMenuSelected(e.target.checked)}
+                                {...register('stage')}
+                                className='mr-2'
                             />
-                            Select Menu (Separate Charges)
+                            Event Stage <span className='text-sm ml-2'>(Starting From Rs.20,000)</span>
                         </label>
                     </div>
+                    {/* Checkbox for services */}
                     <div className="mb-4 w-full">
                         <label className="text-[#293941] flex items-center">
                             <input
                                 type="checkbox"
-                                className="mr-2"
-                                checked={stageChecked}
-                                onChange={(e) => setStageChecked(e.target.checked)}
+                                {...register('services')}
+                                className='mr-2'
                             />
-                            Custom Stage (PKR 5000)
+                            Services <span className='text-sm ml-2'>(extra charges Rs.25,000)</span>
+                        </label>
+                    </div>
+
+                    {/* Checkbox for Event Menu */}
+                    <div className="mb-4 w-full">
+                        <label className="text-[#293941] flex items-center">
+                            <input
+                                type="checkbox"
+                                {...register('menu')}
+                                className='mr-2'
+                            />
+                            Event Menu <span className='text-sm ml-2'>(Extra Charges Applied)</span>
                         </label>
                     </div>
                 </div>
 
 
 
-
-
+                {/* Total Price */}
                 <div className="mt-6 w-full p-4 bg-[#c59a63] rounded shadow">
                     <h2 className="text-xl text-[#293941] font-semibold mb-2">Total Price</h2>
-                    <p className="text-lg text-white">PKR {calculateTotal()}</p>
+                    <p className="text-lg text-white">PKR {total_payment()}</p>
                 </div>
-                <button onClick={() => navigate('/event-payment-detail')} className='px-4 text-[#c59a63] py-2 bg-[#293941] rounded hover:bg-[#c59a63] hover:text-[#293941] w-50 m-4'>Book Now</button>
 
-            </div >
-        </div >
-        
+                {/* Submit Button */}
+                <button
+                    type="submit"
+                    className="px-4 text-[#c59a63] py-2 bg-[#293941] rounded hover:bg-[#c59a63] hover:text-[#293941] w-50 m-4"
+                >
+                    Book Now
+                </button>
+            </form>
+        </div>
     );
 };
 

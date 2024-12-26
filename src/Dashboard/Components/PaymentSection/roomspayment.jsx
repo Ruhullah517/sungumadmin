@@ -9,6 +9,7 @@ const RoomsPaymentList = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate()
   const [roomPayments, setRoomPayments] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -29,7 +30,7 @@ const RoomsPaymentList = () => {
       );
       setRoomPayments(response.data);
       console.log(roomPayments);
-      
+
     } catch (error) {
       console.error("Error fetching eventpayments", error);
     }
@@ -69,6 +70,11 @@ const RoomsPaymentList = () => {
     }
   };
 
+  const filteredRooms = roomPayments.filter((room) =>
+    room.room_number.toString().includes(searchTerm)||
+  room.booked_by.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="page-wrapper bg-[#c2c3c7] min-h-screen">
       <div className="content container mx-auto px-4 py-6">
@@ -83,6 +89,8 @@ const RoomsPaymentList = () => {
                   type="text"
                   className="focus:outline-none form-control"
                   placeholder="Search.."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 <span className="input-group-text">
                   <a href="/react/demo/guest-list">
@@ -128,7 +136,7 @@ const RoomsPaymentList = () => {
               </thead>
               <tbody>
                 {/* Repeat rows dynamically */}
-                {roomPayments.map((booking, index) => {
+                {filteredRooms.map((booking, index) => {
 
                   const date = new Date(booking.payment_date).toISOString().split('T')[0]
                   return (
