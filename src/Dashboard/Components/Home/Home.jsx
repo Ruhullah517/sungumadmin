@@ -39,6 +39,7 @@ import EventMenu from '../Menu/eventmenu';
 import AddEventMenu from '../Menu/addeventmenu';
 import EventBookingPage from '../EventsBooking/eventbooking';
 import RoomBookingRequests from '../RoomsBooking/roomBookingRequest';
+import EventBookingRequests from '../EventsBooking/eventBookingRequest';
 
 
 const Home = () => {
@@ -88,6 +89,7 @@ const Home = () => {
           <Route path='/add-event-menu' element={<AddEventMenu />} />
           <Route path='/event-booking' element={<EventBookingPage />} />
           <Route path='/room-booking-requests' element={<RoomBookingRequests />} />
+          <Route path='/event-booking-requests' element={<EventBookingRequests />} />
           {/* Add other routes as necessary */}
         </Routes>
         <Footer />

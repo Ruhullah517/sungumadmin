@@ -228,7 +228,9 @@ const EventPaymentList = () => {
       // console.log("respnse",response.data);
 
       setEventPayments(response.data);
-  
+      console.log(eventPayments);
+
+
     } catch (error) {
       console.error("Error fetching eventpayments", error);
     }
@@ -237,6 +239,38 @@ const EventPaymentList = () => {
   useEffect(() => {
     fetchEventPayments();
   }, [])
+
+  const handlePaymentReceived = async (booking) => {
+    try {
+      // Format the date to MySQL datetime format (YYYY-MM-DD HH:mm:ss)
+      const currentDate = new Date().toISOString()
+        .slice(0, 19)
+        .replace('T', ' ');
+
+      const updateData = {
+        payment_date: currentDate,
+        paid_amount: Number(booking.total_payment).toFixed(2),
+        payment_status: 'full',
+        id: booking.id
+      };
+
+      console.log('Booking ID:', booking.id);
+      console.log('Update Data:', updateData);
+
+      const response = await axios.put(`http://localhost:5000/api/payments/events/${booking.id}`, updateData);
+      console.log('Server Response:', response.data);
+
+      alert("Payment successfully received");
+      fetchEventPayments();
+    } catch (error) {
+      console.error("Full error details:", error);
+      console.error("Response data:", error.response?.data);
+      console.error("Response status:", error.response?.status);
+      alert(`Failed to update payment: ${error.response?.data?.message || error.message}`);
+    }
+  };
+
+
   return (
     <div className="page-wrapper bg-[#c2c3c7] min-h-screen">
       <div className="content container mx-auto px-4 py-6">
@@ -261,16 +295,6 @@ const EventPaymentList = () => {
                 </span>
               </div>
             </div>
-
-
-            <a
-              onClick={handleBooking}
-              className="btn bg-[#293941] text-[#c59a63] py-2 px-4 rounded hover:bg-[#c59a63] hover:text-[#293941]"
-            >
-              Book Event
-            </a>
-
-
           </div>
         </div>
 
@@ -280,70 +304,82 @@ const EventPaymentList = () => {
             <table className="border-collapse table card-table display mb-4 shadow-hover default-table dataTablesCard dataTable no-footer">
               <thead>
                 <tr className="text-[#293941]">
-                  <th className="px-2">Booking ID</th>
-                  <th className="px-2">Event Name</th>
-                  <th className="px-2">Booked By</th>
-                  <th className="px-2">Account Title</th>
-                  <th className="px-2">Account Number</th>
-                  <th className="px-2">Payment Date</th>
-                  <th className="px-2">Total Payment</th>
-                  <th className="px-2">Paid Amount</th>
-                  <th className="px-2">Remaining Amount</th>
-                  <th className="px-2">Payment</th>
-                  <th className="px-2 text-right">Actions</th>
+                  <th className="px-2 text-start">Booking ID</th>
+                  <th className="px-2 text-start">Event Name</th>
+                  <th className="px-2 text-start">Booked By</th>
+                  <th className="px-2 text-start">Booking Date</th>
+                  <th className="px-2 text-start">Menu</th>
+                  <th className="px-2 text-start">Stage</th>
+                  <th className="px-2 text-start">NO. of Guests</th>
+                  <th className="px-2 text-start">Account Detail</th>
+                  <th className="px-2 text-start">Payment Date</th>
+                  <th className="px-2 text-start">Payment Detail</th>
+                  <th className="px-2 text-start">Payment</th>
+                  <th className="px-2 text-start">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {/* Repeat rows dynamically */}
                 {
-                eventPayments.map((booking, index) => (
-                  <tr
-                    key={index}
-                    role="row"
-                    className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                      }`}
-                  >
-                    <td><span className="text-nowrap">EPL-00{booking.id}</span></td>
-                    <td><span className="text-nowrap">{booking.event_name}</span></td>
-                    <td><span className="text-nowrap">{booking.booked_by}</span></td>
-                    <td><span className="text-nowrap">{booking.account_title}</span></td>
-                    <td><span className="text-nowrap">{booking.account_number}</span></td>
-                    <td><span className="text-nowrap">{booking.payment_date}</span></td>
-                    <td><span className="text-nowrap">{booking.total_payment}</span></td>
-                    <td><span className="text-nowrap">{booking.paid_amount}</span></td>
-                    <td><span className="text-nowrap">{(booking.total_payment)-(booking.paid_amount)}</span></td>
-                    <td><span className="text-nowrap">{booking.payment_status}</span></td>
-                    {/* <td>
-                      <span
-                        className={`px-2 py-1 rounded text-white ${booking.status === "Active"
-                          ? "bg-green-500"
-                          : "bg-gray-500"
+                  eventPayments.map((booking, index) => {
+                    const payment_date = new Date(booking.payment_date).toISOString().split('T')[0];
+                    const booking_date = new Date(booking.booking_date).toISOString().split('T')[0];
+
+                    return (
+                      <tr
+                        key={index}
+                        role="row"
+                        className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"
                           }`}
                       >
-                        {booking.status}
-                      </span>
-                    </td> */}
-                    <td className="px-2 py-2 text-center">
-                      {/* <div className="inline-block relative"> */}
-
-                      {booking.payment_status === 'Half' ? <div key={index} className=" bg-[#c59a63] hover:bg-[#293941] border rounded shadow-md">
-                        <button
-                          className="text-[#293941] block focus:outline-none w-full text-left px-2 py-1 hover:text-[#c59a63]"
-                          onClick={handleDelete}
-                        >
-                          Recived
-                        </button>
-                      </div>
-                        :
-
-                        <span className="text-[#293941] font-semibold text-nowrap">Paid</span>
-
-                      }
-
-                      {/* </div> */}
-                    </td>
-                  </tr>
-                ))}
+                        <td><span className="text-nowrap">EPL-00{booking.id}</span></td>
+                        <td><span className="text-nowrap">{booking.event_name}</span></td>
+                        <td>
+                          <div className="text-nowrap">{booking.booked_by}</div>
+                          <div className="text-nowrap">{booking.email}</div>
+                          <div className="text-nowrap">{booking.phone}</div>
+                          <div className="text-nowrap">{booking.cnic}</div>
+                        </td>
+                        <td>
+                          <div className="text-nowrap font-semibold">{booking_date}</div>
+                          <div className="text-nowrap font-semibold">{booking.booking_time}</div>
+                        </td>
+                        <td>
+                          <div className="text-nowrap">{booking.menu}</div>
+                        </td>
+                        <td>
+                          <div className="text-nowrap">{booking.stage}</div>
+                        </td>
+                        <td>
+                          <div className="text-nowrap">{booking.number_of_guests}</div>
+                        </td>
+                        <td>
+                          <div className="text-nowrap">{booking.account_title}</div>
+                          <div className="text-nowrap">{booking.account_number}</div>
+                        </td>
+                        <td><span className="text-nowrap">{payment_date}</span></td>
+                        <td>
+                          <div className="text-nowrap">TOTAL: {booking.total_payment}</div>
+                          <div className="text-nowrap">PAID: {booking.paid_amount}</div>
+                          <div className="text-nowrap font-semibold">REMAINING: {(booking.total_payment) - (booking.paid_amount)}</div>
+                        </td>
+                        <td><span className="text-nowrap">{booking.payment_status}</span></td>
+                        <td className="px-2 py-2 text-center">
+                          {booking.payment_status === 'partial' ? <div key={index} className=" bg-[#c59a63] hover:bg-[#293941] border rounded shadow-md">
+                            <button
+                              className="text-[#293941] block focus:outline-none w-full text-left px-2 py-1 hover:text-[#c59a63]"
+                              onClick={() => handlePaymentReceived(booking)}
+                            >
+                              Recived
+                            </button>
+                          </div>
+                            :
+                            <span className="text-[#293941] font-semibold text-nowrap">Paid</span>
+                          }
+                        </td>
+                      </tr>
+                    )
+                  })}
               </tbody>
             </table>
           </div>

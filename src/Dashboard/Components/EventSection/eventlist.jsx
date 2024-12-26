@@ -10,16 +10,8 @@ const EventList = () => {
   const [events, setEvents] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // useEffect(() => {
-  //   try {
-  //     axios.get("/get-room").then((resp) => {
-  //       setRooms(resp.data);
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }, []);
 
   const handleEdit = (event) => {
     setSelectedEvent(event);
@@ -27,19 +19,24 @@ const EventList = () => {
   };
 
   const handleSave = (editedEvent) => {
-    axios.put(`/update-room/${editedEvent._id}`, editedEvent).then(() => {
-      const updatedEvents = events.map((event) =>
-        event._id === editedEvent._id ? editedEvent : event
-      );
-      setEvents(updatedEvents);
-      toast.success("Event updated", {
-        transition: Flip,
-        autoClose: 1000,
-        position: "bottom-left",
-        theme: "dark",
+    // Check if editedRoom is FormData
+    const isFormData = editedEvent instanceof FormData;
+
+    axios.put(`http://localhost:5000/api/events/${selectedEvent.id}`, editedEvent, {
+      headers: {
+        'Content-Type': isFormData ? 'multipart/form-data' : 'application/json',
+      },
+    })
+      .then((response) => {
+        // Refresh the rooms list instead of manual update
+        fetchEvents();
+        alert("Event updated successfully");
+        setShowEditModal(false);
+      })
+      .catch((error) => {
+        console.error("Error updating event", error);
+        alert("Failed to update event");
       });
-      setShowEditModal(false);
-    });
   };
 
   const handleCloseEditModal = () => {
@@ -47,32 +44,18 @@ const EventList = () => {
     setSelectedEvent(null);
   };
 
-  // const handleDelete = (roomId) => {
-  //   axios
-  //     .delete(`/delete-room?id=${roomId}`)
-  //     .then(() => {
-  //       const updatedRooms = rooms.filter((room) => room._id !== roomId);
-  //       setRooms(updatedRooms);
-  //       toast.warn("Room deleted", {
-  //         transition: Flip,
-  //         autoClose: 1000,
-  //         position: "bottom-left",
-  //         theme: "dark",
-  //       });
-  //     })
-  //     .catch((error) => {
-  //       console.error("There was an error deleting the room:", error);
-  //       toast.error("Failed to delete room", {
-  //         transition: Flip,
-  //         autoClose: 3000,
-  //         position: "bottom-left",
-  //         theme: "dark",
-  //       });
-  //     });
-  // };
-
-  const handleDelete = () => {
-    alert("Delete booking");
+  const handleDelete = (eventId) => {
+    if (window.confirm("Are you sure you want to delete this event?")) {
+      axios.delete(`http://localhost:5000/api/events/${eventId}`)
+        .then(() => {
+          setEvents(events.filter((event) => event.id !== eventId));
+          alert("Event deleted successfully");
+        })
+        .catch((error) => {
+          console.error("Error deleting Event", error);
+          alert("Failed to delete event");
+        });
+    }
   };
   const handleBooking = () => {
     navigate("/event-booking");
@@ -81,77 +64,48 @@ const EventList = () => {
     navigate("/add-event")
   }
 
+  const fetchEvents = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/events");
+      setEvents(response.data);
+    } catch (error) {
+      console.error("Error fetching room data", error);
+    }
+  };
 
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const filteredEvents = events.filter((event) =>
+    event.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const renderEventImage = (event) => {
+    try {
+      const imageArray = JSON.parse(event.images);
+      const firstImage = imageArray.length > 0 ? imageArray[0].replace(/\\/g, "/") : "";
+
+      return firstImage ? (
+        <img
+          src={`http://localhost:5000/${firstImage}`}
+          alt={event.name}
+          className="rounded w-16"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = 'path/to/fallback/image.jpg';
+          }}
+        />
+      ) : (
+        <span>No Image</span>
+      );
+    } catch (error) {
+      console.error("Error parsing room images:", error);
+      return <span>Error loading image</span>;
+    }
+  };
 
   return (
-    // <div className="px-6 py-8">
-    //   <h2 className="text-2xl font-bold text-center mb-6">List of Rooms</h2>
-
-    //   <div className="overflow-x-auto bg-white shadow-md rounded-lg">
-    //     <table className="min-w-full border border-gray-200 text-sm text-left">
-    //       <thead className="bg-gray-100">
-    //         <tr>
-    //           <th className="px-4 py-2 border-b">Room No</th>
-    //           <th className="px-4 py-2 border-b">Name</th>
-    //           <th className="px-4 py-2 border-b">Facilities</th>
-    //           <th className="px-4 py-2 border-b">Price</th>
-    //           <th className="px-4 py-2 border-b">Room Type</th>
-    //           <th className="px-4 py-2 border-b">Status</th>
-    //           <th className="px-4 py-2 border-b">Action</th>
-    //         </tr>
-    //       </thead>
-    //       <tbody>
-    //         {rooms.map((room) => (
-    //           <tr key={room._id} className="hover:bg-gray-50">
-    //             <td className="px-4 py-2 border-b">{room.roomNo}</td>
-    //             <td className="px-4 py-2 border-b">{room.roomName}</td>
-    //             <td className="px-4 py-2 border-b capitalize">{room.roomFacilities}</td>
-    //             <td className="px-4 py-2 border-b">RS. {room.roomPrice}</td>
-    //             <td className="px-4 py-2 border-b">{room.roomType}</td>
-    //             <td
-    //               className={`px-4 py-2 border-b ${
-    //                 room.roomStatus === "Booked" ? "text-red-500" : "text-green-500"
-    //               }`}
-    //             >
-    //               {room.roomStatus}
-    //             </td>
-    //             <td className="px-4 py-2 border-b flex gap-2">
-    //               <button
-    //                 onClick={() => handleDelete(room._id)}
-    //                 className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-xs"
-    //               >
-    //                 Delete
-    //               </button>
-    //               <button
-    //                 onClick={() => handleEdit(room)}
-    //                 className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-xs"
-    //               >
-    //                 Edit
-    //               </button>
-    //               <button
-    //                 onClick={() => navigate(`/book-room/${room._id}`)}
-    //                 className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-xs"
-    //               >
-    //                 Book Room
-    //               </button>
-    //             </td>
-    //           </tr>
-    //         ))}
-    //       </tbody>
-    //     </table>
-    //   </div>
-
-    //   {showEditModal && (
-    //     <EditRoom
-    //       room={selectedRoom}
-    //       onSave={handleSave}
-    //       onHide={handleCloseEditModal}
-    //     />
-    //   )}
-    // </div>
-
-
-
     <div className="page-wrapper bg-[#c2c3c7] min-h-screen">
       <div className="content container mx-auto px-4 py-6">
         {/* Page Header */}
@@ -165,6 +119,8 @@ const EventList = () => {
                   type="text"
                   className="focus:outline-none form-control"
                   placeholder="Search.."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 <span className="input-group-text">
                   <a href="/react/demo/guest-list">
@@ -192,102 +148,51 @@ const EventList = () => {
             <table className="border-collapse table card-table display mb-4 shadow-hover default-table dataTablesCard dataTable no-footer">
               <thead>
                 <tr className="text-[#293941]">
-                  <th className="px-2">Event ID</th>
-                  <th className="px-2">Image</th>
-                  <th className="px-2">Event Type</th>
-                  <th className="px-2">Hall Price</th>
-                  <th className="px-2">Max Capacity</th>
-                  <th className="px-2">Status</th>
-                  <th className="px-2">Actions</th>
-                  <th className="px-2">Booking</th>
+                  <th className="px-2 text-start">Event ID</th>
+                  <th className="px-2 text-start">Image</th>
+                  <th className="px-2 text-start">Event Name</th>
+                  <th className="px-2 text-start">Hall Price</th>
+                  <th className="px-2 text-start">Max Capacity</th>
+                  <th className="px-2 text-start">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {/* Repeat rows dynamically */}
-                {[
-                  {
-                    id: "EI-0001",
-                    image: "images/birthday.jpg",
-                    eventtype: "Birthday",
-                    price: "25000",
-                    maxcap: 300,
-                    status: "Booked",
-                  }, {
-                    id: "EI-0002",
-                    image: "images/wedding.jpg",
-                    eventtype: "Wedding",
-                    price: "35000",
-                    maxcap: 500,
-                    status: "Available",
-                  }, {
-                    id: "EI-0003",
-                    image: "images/conference.jpg",
-                    eventtype: "Conference Hall",
-                    price: "15000",
-                    maxcap: 300,
-                    status: "Available",
-                  },
-
-                ].map((booking, index) => (
-                  <tr
-                    key={index}
-                    role="row"
-                  >
-                    <td><span className="text-nowrap">{booking.id}</span></td>
-                    {/* <td><span className="text-nowrap">{booking.image}</span></td> */}
-                    <td><div className="concierge-bx"><img className="text-nowrap me-3 rounded" src={booking.image} alt="" /></div></td>
-                    <td><span className="text-nowrap">{booking.eventtype}</span></td>
-                    <td><span className="text-nowrap">{booking.price}</span></td>
-                    <td><span className="text-nowrap">{booking.maxcap}</span></td>
-                    <td>
-                      <span
-                        className={`px-2 py-1 rounded ${booking.status === "Available"
-                          ? "bg-[#c59a63] text-[#293941]"
-                          : "bg-[#293941] text-[#c59a63]"
-                          }`}
-                      >
-                        {booking.status}
-                      </span>
-                    </td>
-                    <td>
-                      {/* <div className="inline-block relative"> */}
-                      <div key={index} className=" flex gap-1 ">
-                        <button
-                          className=" border bg-[#293941] text-[#c59a63] rounded shadow-md block focus:outline-none text-left px-2 py-1 hover:bg-[#c59a63] hover:text-[#293941]"
-                          onClick={handleDelete}
-                        >
-                          Delete
-                        </button>
-                        <button
-                          className="bg-[#c59a63] text-[#293941] border rounded shadow-md block focus:outline-none text-left px-3 py-1 hover:bg-[#293941] hover:text-[#c59a63]"
-                          onClick={() => handleEdit()}
-                        >
-                          Edit
-                        </button>
-                      </div>
-                      {/* </div> */}
-                    </td>
-                    <td><div key={index} className=" flex gap-1 ">
-                      {booking.status === "Available" ? (
-                        <button
-                          className="border bg-[#c59a63] text-[#293941] rounded shadow-md block focus:outline-none text-left px-2 py-1 hover:bg-[#293941] hover:text-[#c59a63]"
-                          onClick={handleBooking}
-                        >
-                          Book Now
-                        </button>
-                      ) : (
-                        <span
-                          className="border text-[#c59a63] rounded shadow-md block focus:outline-none text-left px-2 py-1 bg-[#293941]"
-                        >
-                          Booked
-                        </span>
-                      )}
-
-
-
-                    </div></td>
-                  </tr>
-                ))}
+                {
+                  filteredEvents.map((booking, index) => (
+                    <tr
+                      key={index}
+                      role="row"
+                    >
+                      <td><span className="text-nowrap">{booking.id}</span></td>
+                      {/* <td><span className="text-nowrap">{booking.image}</span></td> */}
+                      <td>
+                        <div className="concierge-bx">
+                          {renderEventImage(booking)}
+                        </div>
+                      </td>
+                      <td><span className="text-nowrap">{booking.name}</span></td>
+                      <td><span className="text-nowrap">{booking.price}</span></td>
+                      <td><span className="text-nowrap">{booking.capacity}</span></td>
+                      <td>
+                        {/* <div className="inline-block relative"> */}
+                        <div key={index} className=" flex gap-1 ">
+                          <button
+                            className=" border bg-[#293941] text-[#c59a63] rounded shadow-md block focus:outline-none text-left px-2 py-1 hover:bg-[#c59a63] hover:text-[#293941]"
+                            onClick={() => handleDelete(booking.id)}
+                          >
+                            Delete
+                          </button>
+                          <button
+                            className="bg-[#c59a63] text-[#293941] border rounded shadow-md block focus:outline-none text-left px-3 py-1 hover:bg-[#293941] hover:text-[#c59a63]"
+                            onClick={() => handleEdit(booking)}
+                          >
+                            Edit
+                          </button>
+                        </div>
+                        {/* </div> */}
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
@@ -319,7 +224,7 @@ const EventList = () => {
 
       {showEditModal && (
         <EditEvent
-          room={selectedEvent}
+          event={selectedEvent}
           onSave={handleSave}
           onHide={handleCloseEditModal}
         />

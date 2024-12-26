@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import axios from 'axios';
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 // import "./roombooking.css";
 import PaymentForm from "../PaymenMethod/paymentmethod";
 
@@ -11,6 +11,8 @@ import PaymentForm from "../PaymenMethod/paymentmethod";
 const EventBookingDetail = () => {
   // let [BookingDetail, setBookingDetail] = useState([])
   let nav = useNavigate();
+  const location = useLocation();
+  const { roomData } = location.state || {};
 
   const { register, handleSubmit, formState: { errors } } = useForm();
   // const userCnic = BookingDetail.cnic;

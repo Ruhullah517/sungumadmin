@@ -92,9 +92,9 @@ export default function SideBar({ isOpen, setIsOpen }) {
             icon="fas fa-suitcase"
             title="Event Booking"
             links={[
-              { href: "/event-booking-list", label: "Booking List" },
+              { href: "/event-booking-list", label: "Hall Availability" },
               // { href: "/edit-customer", label: "Edit Customer" },
-              { href: "/all-events", label: "Book Event" },
+              { href: "/event-booking-requests", label: "Event Booking Request" },
             ]}
           />
 

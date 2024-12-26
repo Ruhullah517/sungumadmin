@@ -1,18 +1,41 @@
 import React, { useState } from "react";
 
 function EditEvent({ event, onSave, onHide }) {
-  const [formData, setFormData] = useState({ ...event });
-
+  const [formData, setFormData] = useState({
+    name: event.name || '',
+    price: event.price || '',
+    capacity: event.capacity || '',
+    description: event.description || ''
+  });
+  const [images, setImages] = useState(null);
+  const [existingImages] = useState(JSON.parse(event.images || '[]'));
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? (checked ? value : "") : value,
+      [name]: value,
     });
   };
+  const handleFileChange = (e) => {
+    setImages(e.target.files);
+  };
 
-  const handleSubmit = () => {
-    onSave(formData);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formDataToSend = new FormData();
+    // Append all form fields
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
+    });
+    // Append existing images that weren't deleted
+    formDataToSend.append('existingImages', JSON.stringify(existingImages));
+    // Append new images if any
+    if (images) {
+      Array.from(images).forEach((file) => {
+        formDataToSend.append('images', file);
+      });
+    }
+    onSave(formDataToSend);
   };
 
   return (
@@ -38,31 +61,16 @@ function EditEvent({ event, onSave, onHide }) {
           {/* Title */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Event Type:
+              Event Name:
             </label>
             <input
               type="text"
-              name="eventType"
-              value={formData.eventType}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:outline-none"
             />
           </div>
-
-          {/* Room Type */}
-          {/* <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Room No:
-            </label>
-            <input
-              type="text"
-              name="roomType"
-              value={formData.roomNo}
-              onChange={handleChange}
-              className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:ring focus:ring-blue-300"
-            />
-          </div> */}
-
           {/* Price */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -70,8 +78,8 @@ function EditEvent({ event, onSave, onHide }) {
             </label>
             <input
               type="text"
-              name="Price"
-              value={formData.Price}
+              name="price"
+              value={formData.price}
               onChange={handleChange}
               className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:outline-none"
             />
@@ -82,43 +90,36 @@ function EditEvent({ event, onSave, onHide }) {
             </label>
             <input
               type="text"
-              name="maxcap"
-              value={formData.maxcap}
+              name="capacity"
+              value={formData.capacity}
               onChange={handleChange}
               className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:outline-none"
             />
           </div>
-
-          {/* Status */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Status:
+              Description
             </label>
-            <div className="flex gap-4 mt-2">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  name="eventStatus"
-                  value="Available"
-                  checked={formData.roomStatus === "Available"}
-                  onChange={handleChange}
-                  className="rounded text-blue-600 focus:outline-none"
-                />
-                <span className="text-sm">Available</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  name="eventStatus"
-                  value="Mantanance"
-                  checked={formData.roomStatus === "Mantanance"}
-                  onChange={handleChange}
-                  className="rounded text-blue-600 focus:outline-none"
-                />
-                <span className="text-sm">On Mantanance</span>
-              </label>
-            </div>
+            <input
+              type="text"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="mt-1 block w-full border rounded-md p-2 text-gray-700 focus:outline-none"
+            />
           </div>
+        </div>
+        {/* Images */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Update Images:
+          </label>
+          <input
+            type="file"
+            multiple
+            onChange={handleFileChange}
+            className="mt-1 block w-full text-gray-700 focus:outline-none"
+          />
         </div>
 
         {/* Footer */}
