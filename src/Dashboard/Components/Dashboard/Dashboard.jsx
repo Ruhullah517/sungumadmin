@@ -1,38 +1,92 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Line, Doughnut } from "react-chartjs-2";
 import {
     Chart as ChartJS,
-    LineElement, PointElement,
-    CategoryScale, LinearScale, ArcElement, Tooltip, Legend,
-    Colors
+    LineElement,
+    PointElement,
+    CategoryScale,
+    LinearScale,
+    ArcElement,
+    Tooltip,
+    Legend,
 } from "chart.js";
+import axios from "axios";
 
-ChartJS.register(LineElement, PointElement,
-    CategoryScale, LinearScale, ArcElement, Tooltip, Legend);
+ChartJS.register(
+    LineElement,
+    PointElement,
+    CategoryScale,
+    LinearScale,
+    ArcElement,
+    Tooltip,
+    Legend
+);
 
 const Dashboard = () => {
+    const [roomPaymentDetails, setRoomPaymentDetails] = useState([]);
+    const [eventPaymentDetails, setEventPaymentDetails] = useState([]);
+    const [roomsData, setRoomsData] = useState([])// Assuming 36 rooms as a constant
+    useEffect(() => {
+        // Fetch Room Payments
+        fetch("http://localhost:5000/api/payments/rooms")
+            .then((response) => response.json())
+            .then((data) => setRoomPaymentDetails(data))
+            .catch((error) => console.error("Error fetching room payments:", error));
+
+        // Fetch Event Payments
+        fetch("http://localhost:5000/api/payments/events")
+            .then((response) => response.json())
+            .then((data) => setEventPaymentDetails(data))
+            .catch((error) => console.error("Error fetching event payments:", error));
+            fetchRooms()
+        }, []);
+
+    const fetchRooms = async () => {
+        try {
+            const response = await axios.get("http://localhost:5000/api/rooms");
+            setRoomsData(response.data);
+        } catch (error) {
+            console.error("Error fetching room data", error);
+        }
+    };
+
+    const totalRoomBookings = roomPaymentDetails.length;
+    const totalEventBookings = eventPaymentDetails.length;
+
+    const totalCollections =
+        roomPaymentDetails.reduce(
+            (acc, cur) => acc + parseFloat(cur.paid_amount || 0),
+            0
+        ) +
+        eventPaymentDetails.reduce(
+            (acc, cur) => acc + parseFloat(cur.paid_amount || 0),
+            0
+        );
+
     const lineChartData = {
         labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
         datasets: [
             {
                 label: "Weekly Room Bookings",
-                data: [10, 15, 25, 35, 20, 30, 40], // Example room booking numbers
-                borderColor: "#c59a63", // Changed color for better representation
+                data: roomPaymentDetails.map((room) => parseFloat(room.paid_amount) || 0),
+                borderColor: "#c59a63",
                 tension: 0.3,
                 fill: true,
-                backgroundColor: "#c59a63", // Updated for a blueish theme
+                backgroundColor: "#c59a63",
             },
         ],
     };
 
     const doughnutChartData = {
-        labels: ["Single Rooms", "Double Rooms", "Suites"],
+        labels: ["Rooms", "Events"],
         datasets: [
             {
-                data: [300, 50, 100],
-                borderColor:"#c59a63",
-                backgroundColor: ["#3d545f", "#c2c3c7", "#c59a63"],
-                // hoverBackgroundColor: ["#43A047", "#FFB300", "#E53935"],
+                data: [
+                    roomPaymentDetails.reduce((acc, room) => acc + parseFloat(room.paid_amount || 0), 0),
+                    eventPaymentDetails.reduce((acc, event) => acc + parseFloat(event.paid_amount || 0), 0),
+                ],
+                borderColor: ["#c59a63", "#c2c3c7"],
+                backgroundColor: ["#c59a63", "#c2c3c7"],
             },
         ],
     };
@@ -41,26 +95,34 @@ const Dashboard = () => {
         <div className="p-6 bg-[#c2c3c7] min-h-screen">
             <div className="container mx-auto">
                 <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-2xl font-bold text-[#293941]">Good Morning SunGum!</h3>
+                    <h3 className="text-2xl font-bold text-[#293941]">
+                        Good Morning SunGum!
+                    </h3>
                 </div>
 
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div className="bg-[#c59a63] shadow-md rounded-lg p-4">
-                        <h3 className="text-xl font-bold text-[#293941]">36</h3>
+                        <h3 className="text-xl font-bold text-[#293941]">{roomsData.length}</h3>
                         <p className="text-sm text-[#293941]">Total Rooms</p>
                     </div>
                     <div className="bg-[#c59a63] shadow-md rounded-lg p-4">
-                        <h3 className="text-xl font-bold text-[#293941]">10</h3>
-                        <p className="text-sm text-[#293941]">Available Rooms</p>
+                        <h3 className="text-xl font-bold text-[#293941]">
+                            {totalRoomBookings}
+                        </h3>
+                        <p className="text-sm text-[#293941]">Total Room Bookings</p>
                     </div>
                     <div className="bg-[#c59a63] shadow-md rounded-lg p-4">
-                        <h3 className="text-xl font-bold text-[#293941]">138</h3>
-                        <p className="text-sm text-[#293941]">Total Events Booking</p>
+                        <h3 className="text-xl font-bold text-[#293941]">
+                            {totalEventBookings}
+                        </h3>
+                        <p className="text-sm text-[#293941]">Total Event Bookings</p>
                     </div>
                     <div className="bg-[#c59a63] shadow-md rounded-lg p-4">
-                        <h3 className="text-xl font-bold text-[#293941]">$360400/year</h3>
-                        <p className="text-sm text-[#293941]">Collections</p>
+                        <h3 className="text-xl font-bold text-[#293941]">
+                            Rs.{totalCollections.toFixed(0)}
+                        </h3>
+                        <p className="text-sm text-[#293941]">Total Collections</p>
                     </div>
                 </div>
 
@@ -71,104 +133,77 @@ const Dashboard = () => {
                         <Line className="text-[#c59a63]" data={lineChartData} />
                     </div>
                     <div className="h-full w-full bg-[#293941] shadow-md rounded-lg p-4">
-                        <h4 className="text-lg font-bold text-[#c59a63] mb-4">Rooms Booked</h4>
+                        <h4 className="text-lg font-bold text-[#c59a63] mb-4">Bookings Overview</h4>
                         <Doughnut data={doughnutChartData} />
                     </div>
                 </div>
 
-                {/* Booking Table */}
-                <div className="mt-6 bg-[#293941] shadow-md rounded-lg p-4">
-                    <div className="flex justify-between items-center mb-4">
-                        <h4 className="text-lg font-bold text-[#c59a63]">Recent Rooms Booking</h4>
-                        <button className="bg-[#c59a63] text-[#293941] px-4 py-2 rounded-lg shadow-md ">
-                            View All
-                        </button>
-                    </div>
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="text-[#c59a63]">
-                                <th className="border-b border-[#c59a63] p-2">Booking ID</th>
-                                <th className="border-b border-[#c59a63] p-2">Name</th>
-                                <th className="border-b border-[#c59a63] p-2">Email</th>
-                                <th className="border-b border-[#c59a63] p-2">Aadhar Number</th>
-                                <th className="border-b border-[#c59a63] p-2">Room Type</th>
-                                <th className="border-b border-[#c59a63] p-2">Number</th>
-                                <th className="border-b border-[#c59a63] p-2">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr className="text-[#c59a63]">
-                                <td className="border-b border-[#c59a63] p-2">BKG-0001</td>
-                                <td className="border-b border-[#c59a63] p-2">Tommy Bernal</td>
-                                <td className="border-b border-[#c59a63] p-2">[email&nbsp;protected]</td>
-                                <td className="border-b border-[#c59a63] p-2">12414786454545</td>
-                                <td className="border-b border-[#c59a63] p-2">Double</td>
-                                <td className="border-b border-[#c59a63] p-2">631-254-6480</td>
-                                <td className="border-b border-[#c59a63] p-2">
-                                    <span className="bg-[#c59a63] text-[#293941] px-2 py-1 rounded-full text-xs">
-                                        INACTIVE
-                                    </span>
-                                </td>
-                            </tr>
-                            {/* Add more rows as needed */}
-                        </tbody>
-                    </table>
-                </div>
-
-
-                <div className="flex flex-row justify-center mt-6 bg-[#293941] shadow-md rounded-lg p-4">
-                    <div className="w-[50%] mt-2 bg-[#c59a63] shadow-md rounded-lg p-2">
-                        <div className="flex justify-between items-center mb-4">
-                            <h4 className="text-lg font-bold text-[#293941]">Recent Income</h4>
-                            <button className="bg-[#293941] text-[#c59a63] px-4 py-2 rounded-lg shadow-md ">
-                                View All
-                            </button>
-                        </div>
+                {/* Tables */}
+                <div className="flex flex-row gap-2 justify-center mt-6 bg-[#293941] shadow-md rounded-lg p-4">
+                    <div className="w-[50%] bg-[#c59a63] shadow-md rounded-lg p-2">
+                        <h4 className="text-lg font-bold text-[#293941]">
+                            Recent Room Bookings
+                        </h4>
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="text-[#293941]">
-                                    <th className="border-b border-[#293941] p-2">Income ID</th>
-                                    <th className="border-b border-[#293941] p-2">Vocher Name</th>
-                                    <th className="border-b border-[#293941] p-2">Total Amount</th>
-                                    <th className="border-b border-[#293941] p-2">Date</th>
+                                    <th className="border-b border-[#293941] p-2">ID</th>
+                                    <th className="border-b border-[#293941] p-2">Room Number</th>
+                                    <th className="border-b border-[#293941] p-2">Total Payment</th>
+                                    <th className="border-b border-[#293941] p-2">Check-in</th>
+                                    <th className="border-b border-[#293941] p-2">Check-Out</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr className="text-[#293941]">
-                                    <td className="border-b border-[#293941] p-2">BKG-0001</td>
-                                    <td className="border-b border-[#293941] p-2">Room Rent</td>
-                                    <td className="border-b border-[#293941] p-2">$10,000</td>
-                                    <td className="border-b border-[#293941] p-2">12/02/2024</td>
-                                </tr>
-                                {/* Add more rows as needed */}
+                                {roomPaymentDetails.map((room) => (
+                                    <tr className="text-[#293941]" key={room.id}>
+                                        <td className="border-b border-[#293941] p-2">{room.id}</td>
+                                        <td className="border-b border-[#293941] p-2">
+                                            {room.room_number}
+                                        </td>
+                                        <td className="border-b border-[#293941] p-2">
+                                            ${room.total_payment}
+                                        </td>
+                                        <td className="border-b border-[#293941] p-2">
+                                            {new Date(room.checkin_date).toLocaleDateString()}
+                                        </td>
+                                        <td className="border-b border-[#293941] p-2">
+                                            {new Date(room.checkout_date).toLocaleDateString()}
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
 
-                    <div className="w-[50%] mt-2 ml-4 bg-[#c59a63] shadow-md rounded-lg p-2">
-                    <div className="flex justify-between items-center mb-4">
-                            <h4 className="text-lg font-bold text-[#293941]">Recent Expence</h4>
-                            <button className="bg-[#293941] text-[#c59a63] px-4 py-2 rounded-lg shadow-md">
-                                View All
-                            </button>
-                        </div>
+                    <div className="w-[50%] bg-[#c59a63] shadow-md rounded-lg p-2">
+                        <h4 className="text-lg font-bold text-[#293941]">
+                            Recent Event Bookings
+                        </h4>
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="text-[#293941]">
-                                    <th className="border-b border-[#293941] p-2">Expence ID</th>
-                                    <th className="border-b border-[#293941] p-2">Vocher Name</th>
-                                    <th className="border-b border-[#293941] p-2">Total Amount</th>
-                                    <th className="border-b border-[#293941] p-2">Date</th>
+                                    <th className="border-b border-[#293941] p-2">ID</th>
+                                    <th className="border-b border-[#293941] p-2">Booked By</th>
+                                    <th className="border-b border-[#293941] p-2">Total Payment</th>
+                                    <th className="border-b border-[#293941] p-2">Check-in</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr className="text-[#293941]">
-                                    <td className="border-b border-[#293941] p-2">ID-0001</td>
-                                    <td className="border-b border-[#293941] p-2">Car Rent</td>
-                                    <td className="border-b border-[#293941] p-2">$10,000</td>
-                                    <td className="border-b border-[#293941] p-2">12/02/2024</td>
-                                </tr>
-                                {/* Add more rows as needed */}
+                                {eventPaymentDetails.map((event) => (
+                                    <tr className="text-[#293941]" key={event.id}>
+                                        <td className="border-b border-[#293941] p-2">{event.id}</td>
+                                        <td className="border-b border-[#293941] p-2">
+                                            {event.booked_by}
+                                        </td>
+                                        <td className="border-b border-[#293941] p-2">
+                                            ${event.total_payment}
+                                        </td>
+                                        <td className="border-b border-[#293941] p-2">
+                                            {new Date(event.booking_date).toLocaleDateString()}
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>

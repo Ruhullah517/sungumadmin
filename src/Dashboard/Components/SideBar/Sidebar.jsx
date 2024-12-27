@@ -231,42 +231,6 @@ function SidebarSubMenu({ isCollapsed, icon, title, links }) {
           </div>
         </div>
       </li>
-
-
-
-
-      {/* <li className="group">
-      <div className="relative">
-        <div className="flex pt-2 pb-2 pl-3 pr-3 rounded-lg justify-center items-center hover:bg-blue-400">
-          <i className={`${icon} mr-2`} />
-          <button className="flex  focus:outline-none w-full justify-between">
-            {isCollapsed && <span>{title}</span>}
-            <i
-              className="fa-solid fa-sort-up hover:fa-sort-down"></i>
-          </button>
-        </div>
-        {isCollapsed && (
-          <div className="flex flex-col items-center relative text-white z-10
-             ">
-            <ul className="hidden list-disc pl-6 overflow-hidden space-y-2 text-sm group-hover:block hover:transition-[max-height] hover:duration-500 hover:ease-in-out">
-              {links.map((link, index) => (
-                <li className="pt-1 pb-1 pl-1" key={index}>
-                  <NavLink
-                    to={link.href}
-                    className={({ isActive }) =>
-                      `hover:text-blue ${isActive ? "text-green-400 font-bold" : ""
-                      }`
-                    }
-                  >
-                    {link.label}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    </li> */}
     </>
   );
 }

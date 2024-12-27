@@ -94,12 +94,6 @@ export default function Calendar({ mode = "month" }) {
     <div className="w-full max-w-4xl mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl text-[#293941] font-semibold">Events Calendar</h1>
-        <button
-          onClick={() => navigate("/event-booking")}
-          className="bg-[#293941] rounded px-2 py-2 hover:bg-[#c59a63] text-[#c59a63] hover:text-[#293941]"
-        >
-          Book Event
-        </button>
       </div>
 
       <div className="flex justify-between items-center mb-6">
