@@ -95,7 +95,7 @@ const AddRoom = () => {
                            required: 'Description is required',
                            minLength: { value: 10, message: 'Description must be at least 10 characters' }
                        })}
-                       placeholder="Room Description"
+                       placeholder="Event Description"
                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:outline-none"
                    />
                    {errors.description && <div className="text-red-500 text-sm mt-1">{errors.description.message}</div>}

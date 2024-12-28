@@ -91,6 +91,14 @@ const Dashboard = () => {
         ],
     };
 
+    // Sort and get the latest room booking based on payment_date
+    const latestRoomBooking = roomPaymentDetails
+        .sort((a, b) => new Date(b.payment_date) - new Date(a.payment_date))[0];
+
+    // Sort and get the latest event booking based on payment_date
+    const latestEventBooking = eventPaymentDetails
+        .sort((a, b) => new Date(b.payment_date) - new Date(a.payment_date))[0];
+
     return (
         <div className="p-6 bg-[#c2c3c7] min-h-screen">
             <div className="container mx-auto">
@@ -155,23 +163,23 @@ const Dashboard = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {roomPaymentDetails.map((room) => (
-                                    <tr className="text-[#293941]" key={room.id}>
-                                        <td className="border-b border-[#293941] p-2">{room.id}</td>
+                                {latestRoomBooking && (
+                                    <tr className="text-[#293941]" key={latestRoomBooking.id}>
+                                        <td className="border-b border-[#293941] p-2">{latestRoomBooking.id}</td>
                                         <td className="border-b border-[#293941] p-2">
-                                            {room.room_number}
+                                            {latestRoomBooking.room_number}
                                         </td>
                                         <td className="border-b border-[#293941] p-2">
-                                            ${room.total_payment}
+                                            ${latestRoomBooking.total_payment}
                                         </td>
                                         <td className="border-b border-[#293941] p-2">
-                                            {new Date(room.checkin_date).toLocaleDateString()}
+                                            {new Date(latestRoomBooking.checkin_date).toLocaleDateString()}
                                         </td>
                                         <td className="border-b border-[#293941] p-2">
-                                            {new Date(room.checkout_date).toLocaleDateString()}
+                                            {new Date(latestRoomBooking.checkout_date).toLocaleDateString()}
                                         </td>
                                     </tr>
-                                ))}
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -190,20 +198,20 @@ const Dashboard = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {eventPaymentDetails.map((event) => (
-                                    <tr className="text-[#293941]" key={event.id}>
-                                        <td className="border-b border-[#293941] p-2">{event.id}</td>
+                                {latestEventBooking && (
+                                    <tr className="text-[#293941]" key={latestEventBooking.id}>
+                                        <td className="border-b border-[#293941] p-2">{latestEventBooking.id}</td>
                                         <td className="border-b border-[#293941] p-2">
-                                            {event.booked_by}
+                                            {latestEventBooking.booked_by}
                                         </td>
                                         <td className="border-b border-[#293941] p-2">
-                                            ${event.total_payment}
+                                            ${latestEventBooking.total_payment}
                                         </td>
                                         <td className="border-b border-[#293941] p-2">
-                                            {new Date(event.booking_date).toLocaleDateString()}
+                                            {new Date(latestEventBooking.booking_date).toLocaleDateString()}
                                         </td>
                                     </tr>
-                                ))}
+                                )}
                             </tbody>
                         </table>
                     </div>
